@@ -41,12 +41,14 @@ void readObjectNodeTM(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);	
+		printf("Decompiling transformation matrix %s...\n", objName);
 		//free(objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling transformation matrix...\n");
 	}
 
 		
@@ -83,11 +85,13 @@ void readObjectAttachment(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling attachment point %s...\n", objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling attachment point...\n");
 	}
 
 	readObjectNodeTM(preTabNum + 1);
@@ -111,11 +115,13 @@ void readObjectLight(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling light %s..\n", objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling light...\n");
 	}
 
 	readObjectNodeTM(preTabNum+1);
@@ -176,6 +182,7 @@ void readObjectList(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	int objCount = getInteger();
+	printf("Decompiling %i object(s)...\n", objCount);
 	
 	tab(preTabNum); fprintf(output, "*OBJECT_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");
@@ -222,7 +229,6 @@ void readObjectList(int preTabNum)
 			readConstraintSolver(preTabNum + 1);
 		}
 	}
-	
 	tab(preTabNum); fprintf(output, "}");
 	//free(peekData);
 }

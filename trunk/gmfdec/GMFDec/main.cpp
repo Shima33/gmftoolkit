@@ -6,6 +6,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <windows.h>
 
 #include "byteFunctions.h"
 #include "materialFunctions.h"
@@ -28,8 +29,10 @@ FILE *source, *output;
 
 int main()
 {
-	source = fopen("star.gmf", "rb");
-	output = fopen("star_txt.gmf", "w");
+	char* sourcePath = openGMFFile();
+	char* outputPath = saveGMFFile();
+	source = fopen(sourcePath, "rb");
+	output = fopen(outputPath, "w");
 	
 	char *header = getBytes(3);
 	
@@ -39,6 +42,8 @@ int main()
 		return 1;
 	}
 	
+	printf("Decompiling Header...\n");
+
 	delete header;
 
 	int gmfVersion = getInteger();
@@ -85,19 +90,18 @@ int main()
 			readObjectList(0);
 			
 		}
-		// EOF
-		else if (!memcmp(objectType, "\x0\x00\x00\x00\x00\x00\x00\x00", 8))
-		{
-			printf("End of file!\n");			
-			return 0;
-		}
 		else
 		{
-			printf("Error! Unknown Object Type !\n");
+			getBytes(8);
+			if (fgetc(source) == EOF)
+				break;
+			printf("Object type unknown!\n");
 			debugHex(objectType, 8);
-			return 0;
+			MessageBox(NULL, L"Error! Unknown Object Type!\n",L"Decompilation unsuccessfull!", MB_OK | MB_ICONWARNING);
+			return 1;
 		}
 	}
-	
+	printf("Decompiled sucessfully!\n");
+	MessageBox(NULL, L"Binary GMF decompiled sucessfully!" ,L"Decompilation successfull!", MB_OK);
 	return 0;
 }
