@@ -99,6 +99,78 @@ void readObjectAttachment(int preTabNum)
 
 }
 
+void readObjectLight(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+
+	tab(preTabNum); fprintf(output, "*LIGHT\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+	}
+	else
+	{
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+	}
+
+	readObjectNodeTM(preTabNum+1);
+
+	getBytes(4);
+
+	int lightType = getInteger();
+
+	switch(lightType)
+	{
+		case 0:
+			tab(preTabNum+1); fprintf(output, "*LIGHT_TYPE\tOmni\n");
+			break;
+
+		default:
+			tab(preTabNum+1); fprintf(output, "*LIGHT_TYPE\tOther\n");
+			break;
+	}
+
+	int shadowType = getInteger();
+
+	switch(shadowType)
+	{
+		case 2:
+			tab(preTabNum+1); fprintf(output, "*LIGHT_SHADOWS\tRaytraced\n");
+			break;
+
+		default:
+			tab(preTabNum+1); fprintf(output, "*LIGHT_SHADOWS\tOther\n");
+			break;
+	}
+
+	int useLight = getInteger();
+	char* lightColor = getRGB();
+	float lightIntensity = getFloat();
+	float lightAspect = getFloat();
+	getBytes(8);
+	float lightAttnStart = getFloat();
+	float lightAttnEnd = getFloat();
+	float lightTDist = getFloat();
+	int lightUseFarAttn = getInteger();
+
+	tab(preTabNum+1); fprintf(output, "*LIGHT_USELIGHT\t%i\n", useLight);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_SPOTSHAPE\tCircle\n");
+	tab(preTabNum+1); fprintf(output, "*LIGHT_COLOR\t%f\n", lightColor);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_INTENS\t%f\n", lightIntensity);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_ASPECT\t%f\n", lightAspect);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_ATTNSTART\t%f\n", lightAttnStart);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_ATTNEND\t%f\n", lightAttnEnd);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_TDIST\t%f\n", lightTDist);
+	tab(preTabNum+1); fprintf(output, "*USE FAR ATTENUATION\t%i\n", lightUseFarAttn);
+
+	tab(preTabNum); fprintf(output, "}\n");
+}
+
 void readObjectList(int preTabNum)
 {
 	getBytes(8);
@@ -123,7 +195,7 @@ void readObjectList(int preTabNum)
 		//Light
 		else if (!memcmp(peekData, "\x05\x00\x00\x00\x03\x00\x00\x00", 8))
 		{
-			
+			readObjectLight(preTabNum + 1);
 		}
 		
 		//Attachement
@@ -144,10 +216,10 @@ void readObjectList(int preTabNum)
 			readRBCollection(preTabNum + 1);
 		}
 		
-		//COnstraint Solver
+		//Constraint Solver
 		else if (!memcmp(peekData, "\x2A\x00\x00\x00\x03\x00\x00\x00", 8))
 		{
-			
+			readConstraintSolver(preTabNum + 1);
 		}
 	}
 	

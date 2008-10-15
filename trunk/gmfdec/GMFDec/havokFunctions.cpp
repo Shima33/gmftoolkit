@@ -39,7 +39,6 @@ void readSimObject(int preTabNum)
 	else
 	{		
 		getBytes(4);
-		debugHex(getBytesNF(16), 16);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
 	}
 
@@ -60,7 +59,7 @@ void readSimObject(int preTabNum)
 	float simUpdatesPertimeStep = getFloat();
 	int simCollisionPairs = getInteger();
 
-	tab(preTabNum+1); fprintf(output, "*GRAVITY\t%f\t%f\t%f\n", simGX, simGY, simGZ);
+	tab(preTabNum+1); fprintf(output, "*GRAVITY\t%f %f %f\n", simGX, simGY, simGZ);
 	tab(preTabNum+1); fprintf(output, "*WORLDSCALE\t%f\n", simWorldScale);
 	tab(preTabNum+1); fprintf(output, "*SIMTOLERANCE\t%f\n", simTolerance);
 	tab(preTabNum+1); fprintf(output, "*RESOLVER\t%i\n", simResolver);
@@ -105,7 +104,6 @@ void readRBCollectionList(int preTabNum)
 		else
 		{		
 			getBytes(4);
-			debugHex(getBytesNF(16), 16);
 			tab(preTabNum+2); fprintf(output, "*NODE_NAME\t(null)\n");
 		}
 
@@ -131,7 +129,6 @@ void readRBCollectionList(int preTabNum)
 		else
 		{		
 			getBytes(4);
-			debugHex(getBytesNF(16), 16);
 			tab(preTabNum+2); fprintf(output, "*GEOMETRY_PROXY_NAME\t(null)\n");
 		}
 
@@ -151,7 +148,6 @@ void readRBCollectionList(int preTabNum)
 		else
 		{		
 			getBytes(4);
-			debugHex(getBytesNF(16), 16);
 			tab(preTabNum+2); fprintf(output, "*DISPLAY_PROXY_NAME\t(null)\n");
 		}
 
@@ -164,6 +160,27 @@ void readRBCollectionList(int preTabNum)
 		tab(preTabNum+2); fprintf(output, "*NUMBER_OF_CHILDREN\t%i\n", rbChildrenNumber);
 
 		tab(preTabNum+1); fprintf(output, "}\n");
+	}
+
+	tab(preTabNum); fprintf(output, "}\n");
+}
+
+void readRBCollisionPairs(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+	int rbCount = getInteger();
+
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_DIS_COLLISION_PAIRS\n");
+	tab(preTabNum); fprintf(output, "{\n");
+	tab(preTabNum+1); fprintf(output, "*COUNT\t%i\n", rbCount);
+	
+	int i;
+	for (i = 0; i < rbCount; i++)
+	{
+		char* rbLeft = getString();
+		char* rbRight = getString();
+		tab(preTabNum+1); fprintf(output, "{ %s\t%s }\n", rbLeft, rbRight);
 	}
 
 	tab(preTabNum); fprintf(output, "}\n");
@@ -185,7 +202,6 @@ void readRBCollection(int preTabNum)
 	else
 	{		
 		getBytes(4);
-		debugHex(getBytesNF(16), 16);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
 	}
 
@@ -198,6 +214,7 @@ void readRBCollection(int preTabNum)
 	while(1)
 	{
 		char* peekData = getBytesNF(8);
+		debugHex(peekData, 8);
 		if (!memcmp(peekData, "\x21\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
 			readRBCollectionList(preTabNum + 1);
@@ -205,11 +222,117 @@ void readRBCollection(int preTabNum)
 		}
 		else if (!memcmp(peekData, "\x33\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
-
+			readRBCollisionPairs(preTabNum+1);
 		}
 		else
 			break;
 	}
 
 	tab(preTabNum); fprintf(output, "}\n");
+}
+
+void readConstraintSolver(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_CONSTRAINTSOLVER\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+	}
+	else
+	{		
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+	}
+
+
+
+	float cnTreshold = getFloat();
+	tab(preTabNum+1); fprintf(output, "*THRESHOLD\t%f\n", cnTreshold);
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* cnRBName = getString();
+		tab(preTabNum+1); fprintf(output, "*RB_COLLECTION_NAME\t%s\n", cnRBName);
+	}
+	else
+	{		
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*RB_COLLECTION_NAME\t(null)\n");
+	}
+
+	int cnCount = getInteger();
+
+	if (cnCount > 0)
+	{
+		char* objType = getBytes(8);
+		if(!memcmp(objType, "\x2C\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			int totalLength = getInteger();
+			int cnlCount = getInteger();
+			tab(preTabNum+1); fprintf(output, "*GMID_HAVOK_CONSTRAINT_LIST\n");
+			tab(preTabNum+1); fprintf(output, "{\n");
+			tab(preTabNum+2); fprintf(output, "*COUNT\t%i\n", cnlCount);
+
+			int i;
+			for (i = 0; i < cnlCount; i++)
+			{
+				tab(preTabNum+2); fprintf(output, "*GMID_HAVOK_HINGE_CONSTRAINT\n");
+				tab(preTabNum+2); fprintf(output, "{\n");
+				getBytes(12);
+				if (getBytesNF(6)[5] != '\x00')
+				{
+					char* cnlName = getString();
+					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t%s\n", cnlName);
+				}
+				else
+				{		
+					getBytes(4);
+					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t(null)\n");
+				}
+
+				readObjectNodeTM(preTabNum + 3);
+
+				char* cnlBody1 = getString();
+				char* cnlBody2 = getString();
+				float px = getFloat();
+				float py = getFloat();
+				float pz = getFloat();
+				float ax = getFloat();
+				float ay = getFloat();
+				float az = getFloat();
+				int cnlIsLimited = getBytes(1)[0];
+				float cnlFriction = getFloat();
+				float cnlAngleLimitA = getFloat();
+				float cnlAngleLimitB = getFloat();
+
+				tab(preTabNum+3); fprintf(output, "*BODY1\t%s\n", cnlBody1);
+				tab(preTabNum+3); fprintf(output, "*BODY2\t%s\n", cnlBody2);
+				tab(preTabNum+3); fprintf(output, "*POINT %f\t%f\t%f\n", px, py, pz);
+				tab(preTabNum+3); fprintf(output, "*SPIN_AXIS %f\t%f\t%f\n", ax, ay, az);
+				tab(preTabNum+3); fprintf(output, "*IS_LIMITED %i\n", cnlIsLimited);
+				tab(preTabNum+3); fprintf(output, "*FRICTION %f\n", cnlFriction);
+				tab(preTabNum+3); fprintf(output, "*ANGLE_LIMITS %f\t%f\n", cnlAngleLimitA, cnlAngleLimitB);
+				
+				//Padding issues when dealing with CSolvers > 1;
+				while(getBytesNF(1)[0] == '\x00')
+					getBytes(1);
+
+				debugHex(getBytesNF(64), 64);
+				tab(preTabNum+2); fprintf(output, "}\n");
+				
+			}
+
+			
+
+			tab(preTabNum+1); fprintf(output, "}\n");
+		}
+	}
+	tab(preTabNum); fprintf(output, "}\n");
+
 }

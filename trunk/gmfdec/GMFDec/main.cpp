@@ -95,6 +95,7 @@ int main()
 		{
 			printf("Error! Unknown Object Type !\n");
 			debugHex(objectType, 8);
+			return 0;
 		}
 	}
 	
