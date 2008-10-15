@@ -31,7 +31,7 @@ void debugHex(char* in, int size)
 	int i;
 	for (i = 0; i < size; i++)
 	{
-		printf("%X ", in[i]);
+		printf("%02X ", in[i]);
 	}
 	printf("\n");
 }

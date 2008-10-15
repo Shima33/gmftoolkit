@@ -68,7 +68,7 @@ void readObjectGeoMesh(int preTabNum)
 		my = getInteger();
 		mz = getInteger();
 		mm = getInteger();
-		tab(preTabNum+2); fprintf(output, "*MESH_FACE\t%i\tA:   %i\tB:   %i\tC:   %i\t*MESH_MTLID %i\n", i, mx, my, mz, mm);
+		tab(preTabNum+2); fprintf(output, "*MESH_FACE\t% 4i\tA:   %i\tB:   %i\tC:   %i\t*MESH_MTLID %i\n", i, mx, my, mz, mm);
 		
 		normalOrder[i*3] = mx;
 		normalOrder[(i*3)+1] = my;
@@ -92,7 +92,7 @@ void readObjectGeoMesh(int preTabNum)
 		}
 
 		tab(preTabNum+1); fprintf(output, "}\n");
-		tab(preTabNum+2); fprintf(output, "*MESH_NUMTFACES\t%i\n", meshNumFaces);
+		tab(preTabNum+1); fprintf(output, "*MESH_NUMTFACES\t%i\n", meshNumFaces);
 		tab(preTabNum+1); fprintf(output, "*MESH_TFACELIST\n");
 		tab(preTabNum+1); fprintf(output, "{\n");
 
@@ -101,7 +101,7 @@ void readObjectGeoMesh(int preTabNum)
 			int mx = getInteger();
 			int my = getInteger();
 			int mz = getInteger();
-			tab(preTabNum+2); fprintf(output, "*MESH_TFACE\t%i\t%i\ti\t%i\n", i, mx, my, mz);
+			tab(preTabNum+2); fprintf(output, "*MESH_TFACE\t%i\t%i\t%i\t%i\n", i, mx, my, mz);
 		}
 		tab(preTabNum+1); fprintf(output, "}\n");
 	}

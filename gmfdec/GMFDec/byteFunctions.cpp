@@ -65,7 +65,7 @@ char* getRGB()
 	unsigned char* in = (unsigned char*)getBytes(3);
 	getBytes(1);
 	char* data = (char*)malloc(sizeof(char)*9);
-	sprintf(data, "0x%02x%02x%02x", in[0], in[1], in[2]);
+	sprintf(data, "0x%02X%02X%02X", in[0], in[1], in[2]);
 	//free(in);
 	return data;
 }
