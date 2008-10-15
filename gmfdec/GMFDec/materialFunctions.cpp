@@ -27,6 +27,7 @@ void readTexture(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	char* mapName = getString();
+	printf("Decompiling texture %s...\n", mapName);
 	char* mapClass = getString();
 	char* mapBitmap = getString();
 	float mapAmount = getFloat();
@@ -112,6 +113,7 @@ void readTextureList(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	int totalCount = getInteger();
+	printf("Decompiling %i texture(s)...\n", totalCount);
 	
 	tab(preTabNum); fprintf(output, "*TEXTURE_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");
@@ -134,6 +136,7 @@ void readMaterial(int preTabNum)
 	int totalLength = getInteger();
 	int matRef = getInteger();
 	char* matName = getString();
+	printf("Decompiling material %s...\n", matName);
 	char* matClass = getString();
 	char* matAmbient = getRGB();
 	char* matDiffuse = getRGB();
@@ -197,9 +200,12 @@ void readMaterial(int preTabNum)
 
 void readMaterialList(int preTabNum)
 {
+	
 	getBytes(8);
 	int matLength = getInteger();
 	int matNumber = getInteger();
+
+	printf("Decompiling %i material(s)...\n", matNumber);
 	
 	tab(preTabNum); fprintf(output, "*MATERIAL_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");

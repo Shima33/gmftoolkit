@@ -35,11 +35,13 @@ void readSimObject(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling havok simobject %s...\n", objName);
 	}
 	else
 	{		
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok simobject...\n");
 	}
 
 	float simGX = getFloat();
@@ -81,6 +83,7 @@ void readRBCollectionList(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	int rbCount = getInteger();
+	printf("Decompiling %i rigidbodies...\n", rbCount);
 
 	tab(preTabNum); fprintf(output, "*COUNT\t%i\n", rbCount);
 	tab(preTabNum); fprintf(output, "*GMID_HAVOK_RIGIBODY_LIST\n");
@@ -100,11 +103,13 @@ void readRBCollectionList(int preTabNum)
 		{
 			char* objName = getString();
 			tab(preTabNum+2); fprintf(output, "*NODE_NAME\t%s\n", objName);
+			printf("Decompiling havok rigidbody %s...\n", objName);
 		}
 		else
 		{		
 			getBytes(4);
 			tab(preTabNum+2); fprintf(output, "*NODE_NAME\t(null)\n");
+			printf("Decompiling havok rigidbody...\n");
 		}
 
 		float rbMass = getFloat();
@@ -170,6 +175,7 @@ void readRBCollisionPairs(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	int rbCount = getInteger();
+	printf("Decompiling %i collision pairs...\n", rbCount);
 
 	tab(preTabNum); fprintf(output, "*GMID_HAVOK_DIS_COLLISION_PAIRS\n");
 	tab(preTabNum); fprintf(output, "{\n");
@@ -198,11 +204,13 @@ void readRBCollection(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling havok rigidbody collection %s...\n", objName);
 	}
 	else
 	{		
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok rigidbody collection...\n");
 	}
 
 	int rbDisabledPairs = getInteger();
@@ -214,7 +222,6 @@ void readRBCollection(int preTabNum)
 	while(1)
 	{
 		char* peekData = getBytesNF(8);
-		debugHex(peekData, 8);
 		if (!memcmp(peekData, "\x21\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
 			readRBCollectionList(preTabNum + 1);
@@ -243,11 +250,13 @@ void readConstraintSolver(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling havok constraint solver collection %s...\n", objName);
 	}
 	else
 	{		
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok constraint solver collection...\n");
 	}
 
 
@@ -278,6 +287,7 @@ void readConstraintSolver(int preTabNum)
 			tab(preTabNum+1); fprintf(output, "*GMID_HAVOK_CONSTRAINT_LIST\n");
 			tab(preTabNum+1); fprintf(output, "{\n");
 			tab(preTabNum+2); fprintf(output, "*COUNT\t%i\n", cnlCount);
+			printf("Decompiling %i constraints...\n", cnlCount);
 
 			int i;
 			for (i = 0; i < cnlCount; i++)
@@ -289,11 +299,13 @@ void readConstraintSolver(int preTabNum)
 				{
 					char* cnlName = getString();
 					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t%s\n", cnlName);
+					printf("Decompiling havok constraint solver %s...\n", cnlName);
 				}
 				else
 				{		
 					getBytes(4);
 					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t(null)\n");
+					printf("Decompiling havok constraint solvers...\n");
 				}
 
 				readObjectNodeTM(preTabNum + 3);
@@ -323,7 +335,6 @@ void readConstraintSolver(int preTabNum)
 				while(getBytesNF(1)[0] == '\x00')
 					getBytes(1);
 
-				debugHex(getBytesNF(64), 64);
 				tab(preTabNum+2); fprintf(output, "}\n");
 				
 			}
