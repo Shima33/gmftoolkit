@@ -228,6 +228,11 @@ void readObjectList(int preTabNum)
 		{
 			readConstraintSolver(preTabNum + 1);
 		}
+
+		else if (!memcmp(peekData, "\x31\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			readAngularDashpot(preTabNum + 1);
+		}
 	}
 	tab(preTabNum); fprintf(output, "}");
 	//free(peekData);

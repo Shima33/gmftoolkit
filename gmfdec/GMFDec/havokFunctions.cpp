@@ -238,6 +238,96 @@ void readRBCollection(int preTabNum)
 	tab(preTabNum); fprintf(output, "}\n");
 }
 
+void readHingeConstraint(int preTabNum)
+{
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_HINGE_CONSTRAINT\n");
+	tab(preTabNum); fprintf(output, "{\n");
+	getBytes(4);
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* cnlName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", cnlName);
+		printf("Decompiling havok hinge constraint %s...\n", cnlName);
+	}
+	else
+	{		
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok hinge constraint...\n");
+	}
+
+	readObjectNodeTM(preTabNum + 3);
+
+	char* cnlBody1 = getString();
+	char* cnlBody2 = getString();
+	float px = getFloat();
+	float py = getFloat();
+	float pz = getFloat();
+	float ax = getFloat();
+	float ay = getFloat();
+	float az = getFloat();
+	int cnlIsLimited = getBytes(1)[0];
+	float cnlFriction = getFloat();
+	float cnlAngleLimitA = getFloat();
+	float cnlAngleLimitB = getFloat();
+
+	tab(preTabNum+1); fprintf(output, "*BODY1\t%s\n", cnlBody1);
+	tab(preTabNum+1); fprintf(output, "*BODY2\t%s\n", cnlBody2);
+	tab(preTabNum+1); fprintf(output, "*POINT %f\t%f\t%f\n", px, py, pz);
+	tab(preTabNum+1); fprintf(output, "*SPIN_AXIS %f\t%f\t%f\n", ax, ay, az);
+	tab(preTabNum+1); fprintf(output, "*IS_LIMITED %i\n", cnlIsLimited);
+	tab(preTabNum+1); fprintf(output, "*FRICTION %f\n", cnlFriction);
+	tab(preTabNum+1); fprintf(output, "*ANGLE_LIMITS %f\t%f\n", cnlAngleLimitA, cnlAngleLimitB);
+	
+	//Padding issues when dealing with CSolvers > 1;
+	while(getBytesNF(1)[0] == '\x00')
+		getBytes(1);
+
+	tab(preTabNum); fprintf(output, "}\n");
+}
+
+void readPointToPoint(int preTabNum)
+{
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_POINTTOPOINT\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	getBytes(4);
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* ptpName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", ptpName);
+		printf("Decompiling havok point to point %s...\n", ptpName);
+	}
+	else
+	{		
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok point to point...\n");
+	}
+
+	readObjectNodeTM(preTabNum + 1);
+
+	char* ptpBody1 = getString();
+	char* ptpBody2 = getString();
+
+	float ptp1 = getFloat();
+	float ptp2 = getFloat();
+	float ptp3 = getFloat();
+	float ptp4 = getFloat();
+	float ptp5 = getFloat();
+	float ptp6 = getFloat();
+
+	tab(preTabNum+1); fprintf(output, "*BODY1\t%s\n", ptpBody1);
+	tab(preTabNum+1); fprintf(output, "*BODY2\t%s\n", ptpBody2);
+
+	tab(preTabNum+1); fprintf(output, "*POINT 1\n");
+	tab(preTabNum+1); fprintf(output, "{  %f\t%f\t%f }\n", ptp1, ptp2, ptp3);
+	tab(preTabNum+1); fprintf(output, "{  %f\t%f\t%f }\n", ptp4, ptp5, ptp6);
+
+	tab(preTabNum); fprintf(output, "}\n");
+}
+
 void readConstraintSolver(int preTabNum)
 {
 	getBytes(8);
@@ -292,50 +382,15 @@ void readConstraintSolver(int preTabNum)
 			int i;
 			for (i = 0; i < cnlCount; i++)
 			{
-				tab(preTabNum+2); fprintf(output, "*GMID_HAVOK_HINGE_CONSTRAINT\n");
-				tab(preTabNum+2); fprintf(output, "{\n");
-				getBytes(12);
-				if (getBytesNF(6)[5] != '\x00')
+				char* constraintType = getBytes(8);
+				if (!memcmp(constraintType, "\x2F\x00\x00\x00\x02\x00\x00\x00", 8))
 				{
-					char* cnlName = getString();
-					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t%s\n", cnlName);
-					printf("Decompiling havok constraint solver %s...\n", cnlName);
+					readHingeConstraint(preTabNum + 2);
 				}
-				else
-				{		
-					getBytes(4);
-					tab(preTabNum+3); fprintf(output, "*NODE_NAME\t(null)\n");
-					printf("Decompiling havok constraint solvers...\n");
+				else if (!memcmp(constraintType, "\x35\x00\x00\x00\x02\x00\x00\x00", 8))
+				{
+					readPointToPoint(preTabNum + 2);
 				}
-
-				readObjectNodeTM(preTabNum + 3);
-
-				char* cnlBody1 = getString();
-				char* cnlBody2 = getString();
-				float px = getFloat();
-				float py = getFloat();
-				float pz = getFloat();
-				float ax = getFloat();
-				float ay = getFloat();
-				float az = getFloat();
-				int cnlIsLimited = getBytes(1)[0];
-				float cnlFriction = getFloat();
-				float cnlAngleLimitA = getFloat();
-				float cnlAngleLimitB = getFloat();
-
-				tab(preTabNum+3); fprintf(output, "*BODY1\t%s\n", cnlBody1);
-				tab(preTabNum+3); fprintf(output, "*BODY2\t%s\n", cnlBody2);
-				tab(preTabNum+3); fprintf(output, "*POINT %f\t%f\t%f\n", px, py, pz);
-				tab(preTabNum+3); fprintf(output, "*SPIN_AXIS %f\t%f\t%f\n", ax, ay, az);
-				tab(preTabNum+3); fprintf(output, "*IS_LIMITED %i\n", cnlIsLimited);
-				tab(preTabNum+3); fprintf(output, "*FRICTION %f\n", cnlFriction);
-				tab(preTabNum+3); fprintf(output, "*ANGLE_LIMITS %f\t%f\n", cnlAngleLimitA, cnlAngleLimitB);
-				
-				//Padding issues when dealing with CSolvers > 1;
-				while(getBytesNF(1)[0] == '\x00')
-					getBytes(1);
-
-				tab(preTabNum+2); fprintf(output, "}\n");
 				
 			}
 
@@ -344,6 +399,57 @@ void readConstraintSolver(int preTabNum)
 			tab(preTabNum+1); fprintf(output, "}\n");
 		}
 	}
+	tab(preTabNum); fprintf(output, "}\n");
+
+}
+
+void readAngularDashpot(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+	
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_ANGULAR_DASHPOT\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling havok angular dashpot %s...\n", objName);
+	}
+	else
+	{		
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling havok angular dashpot...\n");
+	}
+
+	readObjectNodeTM(preTabNum +1);
+
+	char* adBody1 = getString();
+	char* adBody2 = getString();
+
+	float adStrength = getFloat();
+	float adDamping = getFloat();
+
+	int adAllowInterpenetrations = getBytes(1)[0];
+
+	float adQuat1 = getFloat();
+	float adQuat2 = getFloat();
+	float adQuat3 = getFloat();
+	float adQuat4 = getFloat();
+
+	tab(preTabNum+1); fprintf(output, "*BODY1\t%s\n", adBody1);
+	tab(preTabNum+1); fprintf(output, "*BODY2\t%s\n", adBody2);
+
+	tab(preTabNum+1); fprintf(output, "*STRENGTH\t%f\n", adStrength);
+	tab(preTabNum+1); fprintf(output, "*DAMPING\t%f\n", adDamping);
+
+	tab(preTabNum+1); fprintf(output, "*ALLOW_INTERPENETRATIONS\t%i\n", adAllowInterpenetrations);
+
+	tab(preTabNum+1); fprintf(output, "*QUATERNION\n");
+	tab(preTabNum+1); fprintf(output, "{ %f\t%f\t%f\t%f }\n", adQuat1, adQuat2, adQuat3, adQuat4);
+
 	tab(preTabNum); fprintf(output, "}\n");
 
 }
