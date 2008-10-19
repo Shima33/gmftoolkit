@@ -86,7 +86,7 @@ void readRBCollectionList(int preTabNum)
 	printf("Decompiling %i rigidbodies...\n", rbCount);
 
 	tab(preTabNum); fprintf(output, "*COUNT\t%i\n", rbCount);
-	tab(preTabNum); fprintf(output, "*GMID_HAVOK_RIGIBODY_LIST\n");
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_RIGIDBODY_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");
 	tab(preTabNum+1); fprintf(output, "*COUNT\t%i\n", rbCount); //Wierd
 
@@ -126,7 +126,7 @@ void readRBCollectionList(int preTabNum)
 		tab(preTabNum+2); fprintf(output, "*UNYIELDING\t%i\n", rbUnyielding);
 		tab(preTabNum+2); fprintf(output, "*SIMULATION_GEOMETRY\t%i\n", rbSimulationGeo);
 
-		if (getBytesNF(6)[5] != '\x00')
+		if (getBytesNF(5)[4] != '\x00')
 		{
 			char* geometryProxyName = getString();
 			tab(preTabNum+2); fprintf(output, "*GEOMETRY_PROXY_NAME\t%s\n", geometryProxyName);
@@ -159,7 +159,15 @@ void readRBCollectionList(int preTabNum)
 		readObjectNodeTM(preTabNum + 2);
 
 		int rbGeoTypeInt = getInteger();
-		tab(preTabNum+2); fprintf(output, "*HAVOK_GEO_TYPE\tStandard\n");
+		switch (rbGeoTypeInt)
+		{
+			case 1:
+				tab(preTabNum+2); fprintf(output, "*HAVOK_GEO_TYPE\tPlane\n");
+				break;
+			default:
+				tab(preTabNum+2); fprintf(output, "*HAVOK_GEO_TYPE\tStandard\n");
+				break;
+		}
 
 		int rbChildrenNumber = getInteger();
 		tab(preTabNum+2); fprintf(output, "*NUMBER_OF_CHILDREN\t%i\n", rbChildrenNumber);
