@@ -28,7 +28,7 @@ void readSceneInfo()
 	getBytes(8);
 	unsigned int sceneLength = getInteger();
 	char* sceneName = getString();
-	printf("Decompiling scene %s...\n", sceneName);
+	printf("Decompiling SCENE %s...\n\n", sceneName);
 	unsigned int sceneFirstFrame = getInteger();
 	unsigned int sceneLastFrame = getInteger();
 	unsigned int sceneFrameSpeed = getInteger();
