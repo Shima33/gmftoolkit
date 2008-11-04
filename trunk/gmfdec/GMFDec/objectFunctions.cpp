@@ -41,14 +41,14 @@ void readObjectNodeTM(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);	
-		printf("Decompiling transformation matrix %s...\n", objName);
+		printf("Decompiling"); tabList(preTabNum); printf("NODE_TM... %s\n", objName);
 		//free(objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
-		printf("Decompiling transformation matrix...\n");
+		printf("Decompiling"); tabList(preTabNum); printf("NODE_TM...\n");
 	}
 
 		
@@ -85,13 +85,13 @@ void readObjectAttachment(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
-		printf("Decompiling attachment point %s...\n", objName);
+		printf("Decompiling GMID_ATTACHMENTPT %s...\n", objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
-		printf("Decompiling attachment point...\n");
+		printf("Decompiling GMID_ATTACHMENTPT...\n");
 	}
 
 	readObjectNodeTM(preTabNum + 1);
@@ -100,6 +100,7 @@ void readObjectAttachment(int preTabNum)
 	tab(preTabNum+1); fprintf(output, "USER DATA\t%s\n", attData);
 
 	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
 
 }
 
@@ -115,13 +116,13 @@ void readObjectLight(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
-		printf("Decompiling light %s..\n", objName);
+		printf("Decompiling LIGHT %s..\n", objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
-		printf("Decompiling light...\n");
+		printf("Decompiling LIGHT...\n");
 	}
 
 	readObjectNodeTM(preTabNum+1);
@@ -175,6 +176,7 @@ void readObjectLight(int preTabNum)
 	tab(preTabNum+1); fprintf(output, "*USE FAR ATTENUATION\t%i\n", lightUseFarAttn);
 
 	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
 }
 
 void readObjectList(int preTabNum)
@@ -182,7 +184,7 @@ void readObjectList(int preTabNum)
 	getBytes(8);
 	int totalLength = getInteger();
 	int objCount = getInteger();
-	printf("Decompiling %i object(s)...\n", objCount);
+	//printf("Decompiling OBJECT_LIST (%i)...\n", objCount);
 	
 	tab(preTabNum); fprintf(output, "*OBJECT_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");

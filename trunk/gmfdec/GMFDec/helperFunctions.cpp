@@ -39,6 +39,7 @@ char* openGMFFile()
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+	  ofn.lpstrTitle = L"Select Binary GMF File to decompile:";
 
       if (GetOpenFileName(&ofn))
       {
@@ -52,31 +53,26 @@ char* openGMFFile()
 
 char* saveGMFFile()
 {
-      OPENFILENAME ofn;       // common dialog box structure
-      TCHAR szFile[MAX_PATH] = L"";      // buffer for file name
+      OPENFILENAME ofn;
+      TCHAR szFile[MAX_PATH] = L"";
       
-      // Initialize OPENFILENAME
       ZeroMemory(&ofn, sizeof(ofn));
       ofn.lStructSize = sizeof(ofn);
       ofn.hwndOwner = NULL;
       ofn.lpstrFile = (LPWSTR)szFile;
-      // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
-      // use the contents of szFile to initialize itself.
       ofn.lpstrFile[0] = '\0';
       ofn.nMaxFile = MAX_PATH;
       ofn.lpstrFilter = L"ASCII GMF File (*.gmf)\0*.gmf\0\0";
-	  //lol.lpstrFilter="pliki mp3 (*.mp3)\0*.mp3\0pliki wav(*.wav)\0*.wav\0\0";
       ofn.nFilterIndex = 1;
       ofn.lpstrFileTitle = NULL;
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+	  ofn.lpstrTitle = L"Select ASCII GMF File destination:";
 
-      // Display the Open dialog box. 
 
       if (GetSaveFileName(&ofn))
       {
-         //MessageBox(NULL, (LPWSTR)szFile ,L"File Chosen", MB_OK);  //This Line is important Call it line X
 	     char* resultString = (char*)malloc(MAX_PATH);
 		 WideCharToMultiByte(CP_ACP, 0, szFile, wcslen(szFile)+1, resultString , MAX_PATH, NULL, NULL);
          return resultString;
@@ -90,6 +86,13 @@ void tab(int num)
 	int i;
 	for (i = 0; i < num; i++)
 		fprintf(output, "\t");
+}
+
+void tabList(int num)
+{
+	int i;
+	for (i = 0; i < num-1; i++)
+		printf("\t");
 }
 
 void debugHex(char* in, int size)

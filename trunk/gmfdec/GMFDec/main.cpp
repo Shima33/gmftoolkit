@@ -42,7 +42,7 @@ int main()
 		return 1;
 	}
 	
-	printf("Decompiling Header...\n");
+	printf("Decompiling GMI...\n\n");
 
 	delete header;
 

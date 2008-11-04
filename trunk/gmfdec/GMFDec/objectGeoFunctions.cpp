@@ -25,7 +25,7 @@ extern FILE *output;
 
 void readObjectGeoMesh(int preTabNum)
 {
-	printf("Decompiling geometry mesh...\n");
+	printf("Decompiling \tMESH...\n");
 	getBytes(8);
 
 	int totalLength = getInteger();
@@ -225,14 +225,14 @@ void readObjectGeo(int preTabNum)
 	{
 		char* objName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);	
-		printf("Decompiling geometry %s...\n", objName);
+		printf("Decompiling GEOMOBJECT %s...\n", objName);
 		//free(objName);
 	}
 	else
 	{
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
-		printf("Decompiling geometry...\n");
+		printf("Decompiling GEOMOBJECT...\n");
 	}
 
 	if (getBytesNF(1)[0] != '\x00')
@@ -252,5 +252,6 @@ void readObjectGeo(int preTabNum)
 	readObjectGeoMesh(preTabNum + 1);
 	
 	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
 
 }
