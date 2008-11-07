@@ -50,7 +50,7 @@ int readInt(char* name)
 
 	fscanf(input, "%s\t%i\n", nameInFile, &output);
 
-	if (strncmp(name, nameInFile, strlen(name)))
+	if (memcmp(name, nameInFile, strlen(name)))
 	{
 		char* message = (char*)malloc(128);
 		sprintf(message, "readInt(): Expected %s, but found %s instead!\n Ignore and continue?", name, nameInFile);
@@ -69,7 +69,7 @@ char* readString(char* name)
 
 	fscanf(input, "%s	", nameInFile);	
 
-	if (strncmp(name, nameInFile, strlen(name)))
+	if (memcmp(name, nameInFile, strlen(name)))
 	{
 		char* message = (char*)malloc(128);
 		sprintf(message, "readString(): Expected %s, but found %s instead!\n Ignore and continue?", name, nameInFile);
@@ -103,7 +103,7 @@ char* readRGB(char* name)
 
 	fscanf(input, "%s\t0x%s", nameInFile, RGB);
 
-	if (strncmp(name, nameInFile, strlen(name)))
+	if (memcmp(name, nameInFile, strlen(name)))
 	{
 		char* message = (char*)malloc(128);
 		sprintf(message, "readRGB(): Expected %s, but found %s instead!\n Ignroe and continue?", name, nameInFile);
@@ -157,7 +157,7 @@ float readFloat(char* name)
 
 	fscanf(input, "%s\t%f\n", nameInFile, &output);
 
-	if (strncmp(name, nameInFile, strlen(name)))
+	if (memcmp(name, nameInFile, strlen(name)))
 	{
 		char* message = (char*)malloc(128);
 		sprintf(message, "readFloat(): Expected %s, but found %s instead!\nIgnore and continue?", name, nameInFile);
@@ -174,7 +174,7 @@ int readNothing(char* name)
 
 	fscanf(input, "%s\n", nameInFile);
 
-	if (strncmp(name, nameInFile, strlen(name)))
+	if (memcmp(name, nameInFile, strlen(name)))
 	{
 		char* message = (char*)malloc(128);
 		sprintf(message, "readNothing(): Expected %s, but found %s instead!\n Ignore and continue?", name, nameInFile);

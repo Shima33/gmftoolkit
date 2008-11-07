@@ -50,8 +50,8 @@ int readGeoMesh()
 
 	// Loop da loop, baby.
 	char* nextMeshThing = (char*)malloc(sizeof(char)*32);
-	char* meshCStuff = (char*)malloc(sizeof(char)*4096);
-	char* meshNormals = (char*)malloc(sizeof(char)*4096);
+	char* meshCStuff = (char*)malloc(sizeof(char)*128000);
+	char* meshNormals = (char*)malloc(sizeof(char)*128000);
 	int meshCStuffPos = 0;
 	int meshNormalPos = 0;
 	int matBackFace = 0;
@@ -342,7 +342,8 @@ int readLight()
 	float lightTDist = readFloat("*LIGHT_TDIST");
 	printFloat(lightTDist);
 
-	float lightUseFar = readFloat("*USE FAR ATTENUATION =");
+	fscanf(input, "*USE FAR ATTENUATION ");
+	float lightUseFar = readFloat("=");
 	printFloat(lightUseFar);
 
 	closeBracket();
