@@ -467,9 +467,18 @@ int readHavokCSolver()
 	printFloat(csThreshold);
 	printString(csRBCollectionName);
 
-	readNothing("*GMID_HAVOK_CONSTRAINT_LIST");
+	int offset = ftell(input);
+	char* next = (char*)malloc(sizeof(char)*128);
+	fscanf(input, "%s", next);
+	fseek(input, offset, 0);
 
-	readHavokCList();
+	if (strncmp(next, "}", 1))
+	{
+		readNothing("*GMID_HAVOK_CONSTRAINT_LIST");
+		readHavokCList();
+	}
+	else
+		printInt(0);
 
 	closeBracket();
 	int endOffset = ftell(output);
