@@ -52,10 +52,13 @@ int readGeoMesh()
 	char* nextMeshThing = (char*)malloc(sizeof(char)*32);
 	char* meshCStuff = (char*)malloc(sizeof(char)*128000);
 	char* meshNormals = (char*)malloc(sizeof(char)*128000);
+	char* meshSecondary = (char*)malloc(sizeof(char)*128000);
 	int meshCStuffPos = 0;
 	int meshNormalPos = 0;
+	int meshSecondaryPos = 0;
 	int matBackFace = 0;
 	int meshNumTVFaces = 0;
+	int meshNumCVFaces = 0;
 	while (1)
 	{
 		fscanf(input, "%s\n", nextMeshThing);
@@ -114,6 +117,10 @@ int readGeoMesh()
 		else if(!strncmp(nextMeshThing, "*MESH_NUMTVFACES", 17))
 		{
 			fscanf(input, "\t%i\n", &meshNumTVFaces);
+		}
+		else if(!strncmp(nextMeshThing, "*MESH_NUMCVFACES", 17))
+		{
+			fscanf(input, "\t%i\n", &meshNumCVFaces);
 		}
 		else if(!strncmp(nextMeshThing, "*MESH_NUMTFACES", 17))
 		{
@@ -229,23 +236,104 @@ int readGeoMesh()
 			printInt(matRefInt);
 			fseek(output, currentOffset, 0);
 		}
+		else if(!strncmp(nextMeshThing, "*MESH_MAPPINGCHANNEL", 13))
+		{
+			int zero = 0;
+			char* unknBuffer = "\x01\x00\x00\x00\x01\x00\x00\x00";
+			addToString(meshSecondary, unknBuffer, 8, meshSecondaryPos);
+			meshSecondaryPos +=8;
+
+			int mappingChannel;
+			fscanf(input, "\t%i\n", &mappingChannel);
+			addToString(meshSecondary, (char*)&mappingChannel, 4, meshSecondaryPos);
+			meshSecondaryPos += 4;
+
+			openBracket();
+			int numTVert = readInt("*MESH_NUMTVERTEX");
+			char* TVertBuffer = (char*)malloc(sizeof(char)*128000);
+			int TVertBufferPos = 0;
+			readNothing("*MESH_TVERTLIST");
+			openBracket();
+			int i;
+			for (i = 0; i < numTVert; i++)
+			{
+				float f[3];
+				bracketize();
+				fscanf(input, "*MESH_TVERT\t%*i\t%f\t%f\t%f\n", &f[0], &f[1], &f[2]);
+				addToString(TVertBuffer, (char*)&f, 12, TVertBufferPos);
+				TVertBufferPos += 12;
+			}
+			closeBracket();
+
+			int numTFace = readInt("*MESH_NUMTVFACES");
+			char* TFaceBuffer = (char*)malloc(sizeof(char)*128000);
+			int TFaceBufferPos = 0;
+			readNothing("*MESH_TFACELIST");
+			openBracket();
+			for (i = 0; i < numTFace; i++)
+			{
+				int f[3];
+				bracketize();
+				fscanf(input, "*MESH_TFACE\t%*i\t%i\t%i\t%i\n", &f[0], &f[1], &f[2]);
+				addToString(TFaceBuffer, (char*)&f, 12, TFaceBufferPos);
+				TFaceBufferPos += 12;
+			}
+			closeBracket();
+
+			closeBracket();
+
+			addToString(meshSecondary, (char*)&numTVert, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&zero, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&numTFace, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&zero, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&zero, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&numTVert, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, (char*)&numTFace, 4, meshSecondaryPos);
+			meshSecondaryPos +=4;
+
+			addToString(meshSecondary, TVertBuffer, TVertBufferPos, meshSecondaryPos);
+			meshSecondaryPos += TVertBufferPos;
+
+			addToString(meshSecondary, TFaceBuffer, TFaceBufferPos, meshSecondaryPos);
+			meshSecondaryPos += TFaceBufferPos;
+		}
+		else if(!strncmp(nextMeshThing, "}", 1))
+		{
+			break;
+		}
 		else
 		{
-			fseek(input, 0, 1);
-			/*char* temp = (char*)malloc(512);
-			fread(temp, 1, 40, input);
-			temp[40] = '\x00';
-			printf("%s\n", temp);*/
-			break;
+			char* error = (char*)malloc(sizeof(char)*128);
+			sprintf(error, "Unknown mesh parameter %s! Ignore and continue?", nextMeshThing);
+			YesNoError(error, "An error has occured!");
 		}
 		
 	}
-	//meshCStuff[meshCStuffPos] = '\x00';
-	//printf("%i\n", meshNormalPos);
-	printInt(0);
+
+	if (meshSecondaryPos == 0)
+		printInt(0);
+	else
+		fwrite(meshSecondary, 1, meshSecondaryPos, output);
+
 	fwrite(meshCStuff, 1, meshCStuffPos, output);
+
 	fwrite(meshNormals, 1, meshNormalPos, output);
+
 	printInt(matBackFace);
+
+
 	closeBracket();
 	int endOffset = ftell(output);
 	int size = endOffset - beginningOffset;
@@ -323,7 +411,7 @@ int readLight()
 	readString("*LIGHT_SPOTSHAPE");
 
 	char* lightColor = readRGB("*LIGHT_COLOR");
-	printBytes(lightColor, 3);
+	printBytes(lightColor, 4);
 
 	float lightIntensity = readFloat("*LIGHT_INTENS");
 	printFloat(lightIntensity);

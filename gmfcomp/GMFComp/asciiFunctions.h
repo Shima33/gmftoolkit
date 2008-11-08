@@ -4,6 +4,7 @@
 #define closeBracket() CloseBracket(__FUNCTION__)
 
 int Error(const char* title, const char* message);
+int YesNoError(const char* title, const char* message);
 int bracketize();
 int readInt(char* name);
 char* readString(char* name);
