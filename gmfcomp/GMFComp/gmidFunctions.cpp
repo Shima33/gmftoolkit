@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 #include "byteFunctions.h"
 #include "asciiFunctions.h"
@@ -347,6 +348,7 @@ int readHavokHingeC()
 
 int readHavokPivotC()
 {
+	MessageBox(NULL, "Warning! The PIVOT constraint is deprecated. Please use the WHEEL constraint instead (see decompiled carsteering for details)!\nThe file will continue to compile.", "Deprecation error", MB_ICONWARNING);
 	printInt(46);
 	printInt(2);
 	printBytes("\xFF\xFF\xFF\xFF", 4);
@@ -394,6 +396,72 @@ int readHavokPivotC()
 	return 0;
 }
 
+int readHavokWheelC()
+{
+	printInt(46);
+	printInt(2);
+	printBytes("\xFF\xFF\xFF\xFF", 4);
+	int beginningOffset = ftell(output);
+	openBracket();
+
+	char* cName = readString("*NODE_NAME");
+	printString(cName);
+	readTM();
+	char* cBody1 = readString("*BODY1");
+	char* cBody2 = readString("*BODY2");
+
+	float p[3];
+	bracketize();
+	fscanf(input, "*POINT %f\t%f\t%f\n", &p[0], &p[1], &p[2]);
+
+	float s[3];
+	bracketize();
+	fscanf(input, "*SPIN_AXIS %f\t%f\t%f\n", &s[0], &s[1], &s[2]);
+
+	float suspAxis[3];
+	bracketize();
+	fscanf(input, "*SUSPENSION_AXIS %f\t%f\t%f\n", &suspAxis[0], &suspAxis[1], &suspAxis[2]);
+
+	float suspLimits[2];
+	bracketize();
+	fscanf(input, "*SUSPENSION_LIMITS %f\t%f\n", &suspLimits[0], &suspLimits[1]);
+
+	float suspFriction = readFloat("*SUSPENSION_FRICTION");
+
+	float angSpeed = readFloat("*ANGULAR_SPEED");
+
+	float gain = readFloat("*GAIN");
+
+	
+	printString(cBody1);
+	printString(cBody2);
+	printFloat(p[0]);
+	printFloat(p[1]);
+	printFloat(p[2]);
+	printFloat(s[0]);
+	printFloat(s[1]);
+	printFloat(s[2]);
+
+	printFloat(suspAxis[0]);
+	printFloat(suspAxis[1]);
+	printFloat(suspAxis[2]);
+
+	printFloat(suspLimits[0]);
+	printFloat(suspLimits[1]);
+
+	printFloat(suspFriction);
+	printFloat(angSpeed);
+	printFloat(gain);
+
+	closeBracket();
+	int endOffset = ftell(output);
+	int size = endOffset - beginningOffset;
+	fseek(output, beginningOffset - 4, 0);	
+	printInt(0);
+	fseek(output, endOffset, 0);
+	return 0;
+}
+
 int readHavokCItem()
 {
 	char* cType = (char*)malloc(sizeof(char)*128);
@@ -407,6 +475,10 @@ int readHavokCItem()
 	else if (!strncmp(cType, "*GMID_HAVOK_PIVOT_CONSTRAINT", 29))
 	{
 		readHavokPivotC();
+	}
+	else if (!strncmp(cType, "*GMID_HAVOK_WHEEL_CONSTRAINT", 29))
+	{
+		readHavokWheelC();
 	}
 	else
 	{

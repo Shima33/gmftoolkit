@@ -266,7 +266,7 @@ void readHingeConstraint(int preTabNum)
 		printf("Decompiling \tGMID_HAVOK_HINGE_CONSTRAINT...\n");
 	}
 
-	readObjectNodeTM(preTabNum + 3);
+	readObjectNodeTM(preTabNum + 1);
 
 	char* cnlBody1 = getString();
 	char* cnlBody2 = getString();
@@ -296,25 +296,25 @@ void readHingeConstraint(int preTabNum)
 	tab(preTabNum); fprintf(output, "}\n");
 }
 
-void readPivotConstraint(int preTabNum)
+void readWheelConstraint(int preTabNum)
 {
-	tab(preTabNum); fprintf(output, "*GMID_HAVOK_PIVOT_CONSTRAINT\n");
+	tab(preTabNum); fprintf(output, "*GMID_HAVOK_WHEEL_CONSTRAINT\n");
 	tab(preTabNum); fprintf(output, "{\n");
 	getBytes(4);
 	if (getBytesNF(6)[5] != '\x00')
 	{
 		char* cnlName = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", cnlName);
-		printf("Decompiling \tGMID_HAVOK_PIVOT_CONSTRAINT %s...\n", cnlName);
+		printf("Decompiling \tGMID_HAVOK_WHEEL_CONSTRAINT %s...\n", cnlName);
 	}
 	else
 	{		
 		getBytes(4);
 		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
-		printf("Decompiling \tGMID_HAVOK_PIVOT_CONSTRAINT...\n");
+		printf("Decompiling \tGMID_HAVOK_WHEEL_CONSTRAINT...\n");
 	}
 
-	readObjectNodeTM(preTabNum + 3);
+	readObjectNodeTM(preTabNum + 1);
 
 	char* cnlBody1 = getString();
 	char* cnlBody2 = getString();
@@ -334,7 +334,11 @@ void readPivotConstraint(int preTabNum)
 	tab(preTabNum+1); fprintf(output, "*BODY2\t%s\n", cnlBody2);
 	tab(preTabNum+1); fprintf(output, "*POINT %f\t%f\t%f\n", px, py, pz);
 	tab(preTabNum+1); fprintf(output, "*SPIN_AXIS %f\t%f\t%f\n", ax, ay, az);
-	tab(preTabNum+1); fprintf(output, "*UNKNOWN %f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", unkn[0], unkn[1], unkn[2], unkn[3], unkn[4], unkn[5], unkn[6], unkn[7]);
+	tab(preTabNum+1); fprintf(output, "*SUSPENSION_AXIS %f\t%f\t%f\n", unkn[0], unkn[1], unkn[2]);
+	tab(preTabNum+1); fprintf(output, "*SUSPENSION_LIMITS %f\t%f\n", unkn[3], unkn[4]);
+	tab(preTabNum+1); fprintf(output, "*SUSPENSION_FRICTION %f\n", unkn[5]);
+	tab(preTabNum+1); fprintf(output, "*ANGULAR_SPEED %f\n", unkn[6]);
+	tab(preTabNum+1); fprintf(output, "*GAIN %f\n", unkn[7]);
 	
 	//Padding issues when dealing with CSolvers > 1;
 	while(getBytesNF(1)[0] == '\x00')
@@ -448,7 +452,7 @@ void readConstraintSolver(int preTabNum)
 				}
 				else if (!memcmp(constraintType, "\x2E\x00\x00\x00\x02\x00\x00\x00", 8))
 				{
-					readPivotConstraint(preTabNum + 2);
+					readWheelConstraint(preTabNum + 2);
 				}
 				else if (!memcmp(constraintType, "\x35\x00\x00\x00\x02\x00\x00\x00", 8))
 				{
