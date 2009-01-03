@@ -89,7 +89,7 @@ void readRBCollectionList(int preTabNum)
 	tab(preTabNum); fprintf(output, "*COUNT\t%i\n", rbCount);
 	tab(preTabNum); fprintf(output, "*GMID_HAVOK_RIGIDBODY_LIST\n");
 	tab(preTabNum); fprintf(output, "{\n");
-	tab(preTabNum+1); fprintf(output, "*COUNT\t%i\n", rbCount); //Wierd
+	tab(preTabNum+1); fprintf(output, "*COUNT\t%i\n", rbCount); //Weird
 
 	int i;
 	for (i = 0; i < rbCount; i++)
@@ -127,7 +127,7 @@ void readRBCollectionList(int preTabNum)
 		tab(preTabNum+2); fprintf(output, "*UNYIELDING\t%i\n", rbUnyielding);
 		tab(preTabNum+2); fprintf(output, "*SIMULATION_GEOMETRY\t%i\n", rbSimulationGeo);
 
-		if (getBytesNF(5)[4] != '\x00')
+		if (getBytesNF(1)[0] != 0)
 		{
 			char* geometryProxyName = getString();
 			tab(preTabNum+2); fprintf(output, "*GEOMETRY_PROXY_NAME\t%s\n", geometryProxyName);

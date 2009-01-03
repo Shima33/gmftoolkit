@@ -71,11 +71,15 @@ int main()
 {
 	char* openPath = openGMFFile();
 	if (openPath == 0)
-		error("No input file selected!");
+	{
+		return 1;
+    }
 	char* savePath = saveGMFFile();
 	if (savePath == 0)
-		error("No output file selected!");
-	input = fopen(openPath, "r");
+	{
+		return 1;
+    }
+    input = fopen(openPath, "r");
 	output = fopen(savePath, "wb");
 
 	readHeader();

@@ -25,60 +25,56 @@ extern FILE *output;
 char* openGMFFile()
 {
       OPENFILENAME ofn;
-      TCHAR szFile[MAX_PATH] = L"";
+		char* szFile = (char*)malloc(MAX_PATH);
       
       ZeroMemory(&ofn, sizeof(ofn));
       ofn.lStructSize = sizeof(ofn);
       ofn.hwndOwner = NULL;
-      ofn.lpstrFile = (LPWSTR)szFile;
+      ofn.lpstrFile = szFile;
       ofn.lpstrFile[0] = '\0';
       ofn.nMaxFile = MAX_PATH;
-      ofn.lpstrFilter = L"Binary GMF File (*.gmf)\0*.gmf\0\0";
+      ofn.lpstrFilter = "Binary GMF File (*.gmf)\0*.gmf\0\0";
       ofn.nFilterIndex = 1;
       ofn.lpstrFileTitle = NULL;
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-	  ofn.lpstrTitle = L"Select Binary GMF File to decompile:";
+	  ofn.lpstrTitle = "Select Binary GMF File to decompile:";
 
       if (GetOpenFileName(&ofn))
       {
-	     char* resultString = (char*)malloc(MAX_PATH);
-		 WideCharToMultiByte(CP_ACP, 0, szFile, wcslen(szFile)+1, resultString , MAX_PATH, NULL, NULL);
-         return resultString;
+		return szFile;
       }
       
-      return "Error file choosen doesn't exist or no file was chosen";
+      return 0;
 }
 
 char* saveGMFFile()
 {
       OPENFILENAME ofn;
-      TCHAR szFile[MAX_PATH] = L"";
+      char* szFile = (char*)malloc(MAX_PATH);
       
       ZeroMemory(&ofn, sizeof(ofn));
       ofn.lStructSize = sizeof(ofn);
       ofn.hwndOwner = NULL;
-      ofn.lpstrFile = (LPWSTR)szFile;
+      ofn.lpstrFile = szFile;
       ofn.lpstrFile[0] = '\0';
       ofn.nMaxFile = MAX_PATH;
-      ofn.lpstrFilter = L"ASCII GMF File (*.gmf)\0*.gmf\0\0";
+      ofn.lpstrFilter = "ASCII GMF File (*.gmf)\0*.gmf\0\0";
       ofn.nFilterIndex = 1;
       ofn.lpstrFileTitle = NULL;
       ofn.nMaxFileTitle = 0;
       ofn.lpstrInitialDir = NULL;
       ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-	  ofn.lpstrTitle = L"Select ASCII GMF File destination:";
+	  ofn.lpstrTitle = "Select ASCII GMF File destination:";
 
 
       if (GetSaveFileName(&ofn))
       {
-	     char* resultString = (char*)malloc(MAX_PATH);
-		 WideCharToMultiByte(CP_ACP, 0, szFile, wcslen(szFile)+1, resultString , MAX_PATH, NULL, NULL);
-         return resultString;
+         return szFile;
       }
       
-      return "Error file choosen doesn't exist or no file was chosen";
+      return 0;
 }
 
 void tab(int num)
