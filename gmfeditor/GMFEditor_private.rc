@@ -1,0 +1,44 @@
+/* THIS FILE WILL BE OVERWRITTEN BY DEV-C++ */
+/* DO NOT EDIT! */
+
+#include <windows.h> // include for version info constants
+
+
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "GMFEditor.ico"
+
+//
+// SUPPORT FOR WINDOWS XP THEMES:
+// THIS WILL MAKE THE PROGRAM USE THE COMMON CONTROLS
+// LIBRARY VERSION 6.0 (IF IT IS AVAILABLE)
+//
+1 24 "GMFEditor.exe.Manifest"
+
+//
+// TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
+//
+1 VERSIONINFO
+FILEVERSION 0,1,1,3
+PRODUCTVERSION 0,1,1,3
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E4"
+		 {
+			 VALUE "CompanyName", "Sergiusz Bazanski q3k.org"
+			 VALUE "FileVersion", ""
+			 VALUE "FileDescription", "A tool to explore GMF files"
+			 VALUE "InternalName", ""
+			 VALUE "LegalCopyright", ""
+			 VALUE "LegalTrademarks", ""
+			 VALUE "OriginalFilename", "GMFExplorer.exe"
+			 VALUE "ProductName", "GMF Explorer"
+			 VALUE "ProductVersion", ""
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1252
+	 }
+}
+
