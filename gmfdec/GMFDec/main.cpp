@@ -34,6 +34,12 @@ int main()
 	source = fopen(sourcePath, "rb");
 	output = fopen(outputPath, "w");
 	
+	if (source == 0 || output == 0)
+	{
+		printf("No file selected, exiting.");
+		return 1;
+	}
+	
 	char *header = getBytes(3);
 	
 	if(strncmp(header, "GMI", 3))
@@ -97,11 +103,11 @@ int main()
 				break;
 			printf("Object type unknown!\n");
 			debugHex(objectType, 8);
-			MessageBox(NULL, L"Error! Unknown Object Type!\n",L"Decompilation unsuccessfull!", MB_OK | MB_ICONWARNING);
+			MessageBox(NULL, "Error! Unknown Object Type!\n","Decompilation unsuccessfull!", MB_OK | MB_ICONWARNING);
 			return 1;
 		}
 	}
 	printf("Decompiled sucessfully!\n");
-	MessageBox(NULL, L"Binary GMF decompiled sucessfully!" ,L"Decompilation successfull!", MB_OK);
+	MessageBox(NULL, "Binary GMF decompiled sucessfully!" ,"Decompilation successfull!", MB_OK);
 	return 0;
 }
