@@ -12,7 +12,7 @@
 	{
 		MessageBoxA(NULL, exception, "An error has occured!", MB_OK | MB_ICONERROR );
 	}
-	cout << ((cGMFObjectRBCollection*)gmf->objectList->objects[4])->rblist->rbs[0]->geoType << endl;
+	//cout << ((cGMFObjectRBCollection*)gmf->objectList->objects[4])->rblist->rbs[0]->geoType << endl;
 	system("pause");
 	
 	return 0;

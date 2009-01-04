@@ -30,16 +30,29 @@ cGMFObjectList* cGMF::readObjectList(int size)
 		size = getInteger();
 
 		if (id == 2 && flags == 4)
+		{
 			list->objects[i] = readObjectGeo(size);
+			cout << "Geo." << endl;
+		}
 		else if (id == 21 && flags == 2)
+		{
 			list->objects[i] = readObjectAttachment(size);
+			cout << "Attach" << endl;
+		}
 		else if (id == 30 && flags == 2)
+		{
 			list->objects[i] = readObjectSimobject(size);
+			cout << "Simobj" << endl;
+		}
 		else if (id == 31 && flags == 4)
+		{
 			list->objects[i] = readObjectRBCollection(size);
+			cout << "rbcol" << endl;
+		}
 		else
 		{
 			cout << "Unknown Object Type! Skipped (this is normal, do not worry) id: " << id << " flags: " << flags << " size: " << size << endl;
+			system("pause");
 			getBytes(size);
 		}
 	}
@@ -107,6 +120,7 @@ cGMFMesh* cGMF::readMesh()
 	{
 		mesh->mappingChannel = new cGMFMeshMappingChannel *[mesh->secondMaterial];
 		mesh->secondMaterialAmount = getInteger();
+		cout << mesh->secondMaterialAmount << endl;
 		for (i = 0; i < mesh->secondMaterial; i++)
 		{
 			mesh->mappingChannel[i] = new cGMFMeshMappingChannel();
@@ -116,8 +130,9 @@ cGMFMesh* cGMF::readMesh()
 			mesh->mappingChannel[i]->numTFaces = getInteger();
 			getBytes(16);
 
+			mesh->mappingChannel[i]->tverts = new cGMFVertex *[mesh->mappingChannel[i]->numTVerts];
 			int j;
-			for (j = 0; j < mesh->mappingChannel[i]->numTVerts; i++)
+			for (j = 0; j < mesh->mappingChannel[i]->numTVerts; j++)
 			{
 				mesh->mappingChannel[i]->tverts[j] = new cGMFVertex();
 				mesh->mappingChannel[i]->tverts[j]->vert[0] = getFloat();
@@ -125,13 +140,13 @@ cGMFMesh* cGMF::readMesh()
 				mesh->mappingChannel[i]->tverts[j]->vert[2] = getFloat();
 			}
 
-			for (j = 0; j < mesh->mappingChannel[i]->numTFaces; i++)
+			mesh->mappingChannel[i]->tfaces = new cGMFFace *[mesh->mappingChannel[i]->numTFaces];
+			for (j = 0; j < mesh->mappingChannel[i]->numTFaces; j++)
 			{
 				mesh->mappingChannel[i]->tfaces[j] = new cGMFFace();
 				mesh->mappingChannel[i]->tfaces[j]->vertex[0] = getInteger();
 				mesh->mappingChannel[i]->tfaces[j]->vertex[1] = getInteger();
 				mesh->mappingChannel[i]->tfaces[j]->vertex[2] = getInteger();
-				mesh->mappingChannel[i]->tfaces[j]->matlid = getInteger();
 			}
 		}
 	}
