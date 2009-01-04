@@ -144,7 +144,7 @@ void readObjectGeoMesh(int preTabNum)
 				int mx = getInteger();
 				int my = getInteger();
 				int mz = getInteger();
-				tab(preTabNum+3); fprintf(output, "*MESH_TFACE\t%i\t%i\ti\t%i\n", i, mx, my, mz);
+				tab(preTabNum+3); fprintf(output, "*MESH_TFACE\t%i\t%i\t%i\t%i\n", i, mx, my, mz);
 			}
 			tab(preTabNum+2); fprintf(output, "}\n");
 
