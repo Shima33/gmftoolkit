@@ -167,7 +167,7 @@ void readObjectLight(int preTabNum)
 
 	tab(preTabNum+1); fprintf(output, "*LIGHT_USELIGHT\t%i\n", useLight);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_SPOTSHAPE\tCircle\n");
-	tab(preTabNum+1); fprintf(output, "*LIGHT_COLOR\t%f\n", lightColor);
+	tab(preTabNum+1); fprintf(output, "*LIGHT_COLOR\t%s\n", lightColor);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_INTENS\t%f\n", lightIntensity);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_ASPECT\t%f\n", lightAspect);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_ATTNSTART\t%f\n", lightAttnStart);
