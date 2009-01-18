@@ -31,9 +31,9 @@ CompilerSettings=0000000001100000000100
 
 [VersionInfo]
 Major=0
-Minor=14
+Minor=15
 Release=1
-Build=2
+Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=Sergiusz Bazanski q3k.org

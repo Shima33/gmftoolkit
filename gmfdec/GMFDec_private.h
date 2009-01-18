@@ -5,11 +5,11 @@
 #define GMFDEC_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.14.1.2"
+#define VER_STRING	"0.15.1.1"
 #define VER_MAJOR	0
-#define VER_MINOR	14
+#define VER_MINOR	15
 #define VER_RELEASE	1
-#define VER_BUILD	2
+#define VER_BUILD	1
 #define COMPANY_NAME	"Sergiusz Bazanski q3k.org"
 #define FILE_VERSION	"GMFDec.exe"
 #define FILE_DESCRIPTION	"GMF Decompiler"
