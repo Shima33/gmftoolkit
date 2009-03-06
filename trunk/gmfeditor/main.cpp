@@ -4,22 +4,22 @@
 #include <stdio.h>
 
 #include "cGMF.h"
+#include "main.h"
+#include "populate.h"
+
 
 cGMF* gmf;
 char* buf;
 
 char *StrToC(string str)
 {
-	strcpy(buf, str.c_str());
-	return buf;
+        strcpy(buf, str.c_str());
+        return buf;
 }
 
-char *RGBToC(RGB color)
-{
-	char* ret = (char*)malloc(sizeof(char)*20);
-	sprintf(ret, "%02X%02X%02X", color.red, color.green, color.blue);
-	return ret;
-}
+
+TV_INSERTSTRUCT tvi;
+HWND hwndTV;
 
 /*  Declare Windows procedure  */
 LRESULT CALLBACK WindowProcedure (HWND, UINT, WPARAM, LPARAM);
@@ -45,8 +45,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     wincl.cbSize = sizeof (WNDCLASSEX);
 
     /* Use default icon and mouse-pointer */
-    wincl.hIcon = LoadIcon (NULL, IDI_APPLICATION);
-    wincl.hIconSm = LoadIcon (NULL, IDI_APPLICATION);
+    wincl.hIcon = LoadIcon(hThisInstance, MAKEINTRESOURCE(ICON_MAIN));
+    wincl.hIconSm = LoadIcon(hThisInstance, MAKEINTRESOURCE(ICON_MAIN));
     wincl.hCursor = LoadCursor (NULL, IDC_ARROW);
     wincl.lpszMenuName = NULL;                 /* No menu */
     wincl.cbClsExtra = 0;                      /* No extra bytes after the window class */
@@ -90,13 +90,13 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     return messages.wParam;
 }
 
-void populateTreeView(HWND hwndTV)
-{
-	TV_INSERTSTRUCT tvi;
-	
+void populateTreeView()
+{	
 	HTREEITEM Parent;
 	HTREEITEM Root;
 	HTREEITEM Materials;
+	HTREEITEM Textures;
+	HTREEITEM Objects;
 	HTREEITEM Temp;
 	
 	tvi.hParent = NULL;
@@ -104,186 +104,85 @@ void populateTreeView(HWND hwndTV)
 	tvi.item.mask = TVIF_TEXT | TVIF_PARAM; 
 
 	tvi.item.pszText = StrToC(gmf->scene->name);
-	Root = (HTREEITEM)SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
+	Root = Add(); 
 	
 	tvi.hInsertAfter=TVI_LAST;
 	
 	tvi.hParent = Root;
-	tvi.item.pszText = "Scene";
-	Parent = (HTREEITEM)SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
+	Parent = AddLabel("Scene", gmf->scene, 0);
 	
 	int i;
 	char* itoabuf = (char*)malloc(sizeof(char)*6);
 	tvi.hParent = Parent;
 	
-	tvi.item.pszText = StrToC("Name: " + gmf->scene->name);
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	itoa(gmf->scene->firstFrame, itoabuf, 10);
-	tvi.item.pszText = StrToC("First Frame: " + (string)itoabuf);
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	itoa(gmf->scene->lastFrame, itoabuf, 10);
-	tvi.item.pszText = StrToC("Last Frame: " + (string)itoabuf);
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	itoa(gmf->scene->frameSpeed, itoabuf, 10);
-	tvi.item.pszText = StrToC("Frame Speed: " + (string)itoabuf);
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	itoa(gmf->scene->ticksPerFrame, itoabuf, 10);
-	tvi.item.pszText = StrToC("Ticks per Frame: " + (string)itoabuf);
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	tvi.item.pszText = StrToC("Background Static: " + (string)RGBToC(gmf->scene->backgroundStatic));
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
-	tvi.item.pszText = StrToC("Ambient Static: " + (string)RGBToC(gmf->scene->ambientStatic));
-	SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-	
+	AddString("Name", &gmf->scene->name);	
+	AddInt("First Frame", (int*)&gmf->scene->firstFrame);	
+	AddInt("Last Frame", (int*)&gmf->scene->lastFrame);	
+	AddInt("Frame Speed", (int*)&gmf->scene->frameSpeed);	
+	AddInt("Ticks per Frame", (int*)&gmf->scene->ticksPerFrame);
+	AddRGB("Background Static", &gmf->scene->backgroundStatic);
+	AddRGB("Ambient Static", &gmf->scene->ambientStatic);
 	
 	tvi.hParent = Root;
-	tvi.item.pszText = "Materials";
-	Materials = (HTREEITEM)SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
+	Materials = AddLabel("Materials", gmf->materialList, 0);
+	ReadMaterials(Materials, gmf->materialList);
 	
-	
-	for (i = 0; i < gmf->materialList->number; i++)
+	tvi.hParent = Root;
+	Objects = AddLabel("Objects", gmf->objectList, 0);
+	tvi.hParent = Objects;
+	HTREEITEM Geometry = AddLabel("Geometry Objects", NULL, 0);
+	HTREEITEM Havok = AddLabel("Havok Objects", NULL, 0);
+	HTREEITEM Attachment = AddLabel("Attachment Points", NULL, 0);
+	HTREEITEM Unhandled = AddLabel("Unhandled Objects", NULL, 0);
+	for (i = 0; i < gmf->objectList->number; i++)
 	{
-		tvi.hParent = Materials;		
-		itoa(i, itoabuf, 10);
-		tvi.item.pszText = StrToC((string)itoabuf + " (" + gmf->materialList->materials[i]->name + ")");
-		Parent = (HTREEITEM)SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		tvi.hParent = Parent;
-		
-		itoa(gmf->materialList->materials[i]->ref, itoabuf, 10);
-		tvi.item.pszText = StrToC("Ref No: " + (string)itoabuf);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		tvi.item.pszText = StrToC("Name: " + gmf->materialList->materials[i]->name);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		tvi.item.pszText = StrToC("Class: " + gmf->materialList->materials[i]->classname);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		tvi.item.pszText = StrToC("Ambient: " + (string)RGBToC(gmf->materialList->materials[i]->ambient));
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		tvi.item.pszText = StrToC("Diffuse: " + (string)RGBToC(gmf->materialList->materials[i]->diffuse));
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		tvi.item.pszText = StrToC("Specular: " + (string)RGBToC(gmf->materialList->materials[i]->specular));
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		sprintf(itoabuf, "%f", gmf->materialList->materials[i]->shine);
-		tvi.item.pszText = StrToC("Shine: " + (string)itoabuf);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-		sprintf(itoabuf, "%f", gmf->materialList->materials[i]->shineStrength);
-		tvi.item.pszText = StrToC("Shine Strength: " + (string)itoabuf);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		sprintf(itoabuf, "%f", gmf->materialList->materials[i]->transparency);
-		tvi.item.pszText = StrToC("Transparency: " + (string)itoabuf);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		sprintf(itoabuf, "%f", gmf->materialList->materials[i]->wiresize);
-		tvi.item.pszText = StrToC("Wire Size: " + (string)itoabuf);
-		SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi); 
-		
-		if(gmf->materialList->materials[i]->texNum > 0)
+		tvi.hParent = Objects;
+		switch(gmf->objectList->objects[i]->getType())
 		{
-			itoa(gmf->materialList->materials[i]->texNum, itoabuf, 10);
-			tvi.item.pszText = StrToC((string)itoabuf + (string)" texture(s)");
-			tvi.hParent = (HTREEITEM)SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-			int j;
-			for (j = 0; j < gmf->materialList->materials[i]->texNum; j++)
-			{
-				tvi.item.pszText = StrToC("Name: " + gmf->materialList->materials[i]->textureList->textures[j]->name);
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				tvi.item.pszText = StrToC("Class: " + gmf->materialList->materials[i]->textureList->textures[j]->classname);
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				tvi.item.pszText = StrToC("Bitmap: " + gmf->materialList->materials[i]->textureList->textures[j]->bitmap);
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+			/*case -1:
+				tvi.hParent = Unhandled;
+				AddLabel("UNHANDLED OBJECT", NULL, 0);
+				break;
+			case GEOMOBJECT:
+				tvi.hParent = Geometry;
+				tvi.hParent = AddLabel(StrToC(gmf->objectList->objects[i]->name), &gmf->objectList->objects[i]->name, 0);						
+				AddString("Name", &gmf->objectList->objects[i]->name);
+				AddString("Parent", &((cGMFObjectGeo*)gmf->objectList->objects[i])->parent);
+				AddInt("Shade Verts", &((cGMFObjectGeo*)gmf->objectList->objects[i])->shadeVerts);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->amount);
-				tvi.item.pszText = StrToC("Amount: " + (string)itoabuf);
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+				ReadTM(gmf->objectList->objects[i]->tm);
 				
-				itoa(gmf->materialList->materials[i]->textureList->textures[j]->style, itoabuf, 10);
-				if (gmf->materialList->materials[i]->textureList->textures[j]->style == 1)
-					tvi.item.pszText = StrToC("Style: " + (string)itoabuf + " (diffuse)");
-				else if (gmf->materialList->materials[i]->textureList->textures[j]->style == 5)
-					tvi.item.pszText = StrToC("Style: " + (string)itoabuf + " (selfillum)");
-				else if (gmf->materialList->materials[i]->textureList->textures[j]->style == 6)
-					tvi.item.pszText = StrToC("Style: " + (string)itoabuf + " (opacity)");
-				else
-					tvi.item.pszText = StrToC("Style: " + (string)itoabuf + " (diffuse)");
-					
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-					
-				itoa(gmf->materialList->materials[i]->textureList->textures[j]->type, itoabuf, 10);
-				if (gmf->materialList->materials[i]->textureList->textures[j]->type == 4)
-					tvi.item.pszText = StrToC("Type: " + (string)itoabuf + " (screen)");
-				else
-					tvi.item.pszText = StrToC("Type: " + (string)itoabuf + " (unknown)");
+				tvi.hParent = AddLabel("Mesh", &((cGMFObjectGeo*)gmf->objectList->objects[i])->mesh, 0);
+				ReadMesh(((cGMFObjectGeo*)gmf->objectList->objects[i])->mesh);
+				break;
 				
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UO);
-				tvi.item.pszText = StrToC("UVW U Offset: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+			case GMID_HAVOK_SIMOBJECT:
+				tvi.hParent = Havok;
+				tvi.hParent = AddString("Simulation Object", &gmf->objectList->objects[i]->name);						
+				AddString("Name", &gmf->objectList->objects[i]->name);
+				break;
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->VO);
-				tvi.item.pszText = StrToC("UVW V Offset: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UT);
-				tvi.item.pszText = StrToC("UVW U Tiling: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+			case GMID_ATTACHMENTPT:
+				tvi.hParent = Attachment;
+				tvi.hParent = AddLabel(StrToC(gmf->objectList->objects[i]->name), &gmf->objectList->objects[i]->name, 0);						
+				AddString("Name", &gmf->objectList->objects[i]->name);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->VT);
-				tvi.item.pszText = StrToC("UVW V Tiling: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+				ReadTM(gmf->objectList->objects[i]->tm);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWAngle);
-				tvi.item.pszText = StrToC("UVW Angle: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
+				AddString("User Data", &((cGMFObjectAttachment*)gmf->objectList->objects[i])->userData);
+				break;
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWBlur);
-				tvi.item.pszText = StrToC("UVW Blur: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
 				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWBlurOffset);
-				tvi.item.pszText = StrToC("UVW Blur Offset: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWNoiseAmount);
-				tvi.item.pszText = StrToC("UVW Noise Amount: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWNoiseSize);
-				tvi.item.pszText = StrToC("UVW Noise Size: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-				itoa(gmf->materialList->materials[i]->textureList->textures[j]->UVWNoiseLevel, itoabuf, 10);
-				tvi.item.pszText = StrToC("UVW Noise Level: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-				sprintf(itoabuf, "%f", gmf->materialList->materials[i]->textureList->textures[j]->UVWNoisePhase);
-				tvi.item.pszText = StrToC("UVW Noise Phase: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-				itoa(gmf->materialList->materials[i]->textureList->textures[j]->bitmapFilter, itoabuf, 10);
-				if (gmf->materialList->materials[i]->textureList->textures[j]->bitmapFilter == 0)
-					tvi.item.pszText = StrToC("Bitmap Filter: " + (string)itoabuf + " (pyramidal)");
-				else
-					tvi.item.pszText = StrToC("Bitmap Filter: " + (string)itoabuf + " (SAT)");
-				
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-					
-				itoa(gmf->materialList->materials[i]->textureList->textures[j]->bitmapChannel, itoabuf, 10);
-				tvi.item.pszText = StrToC("Bitmap Channel: " + (string)itoabuf );
-				SendMessage(hwndTV, TVM_INSERTITEM, 0, (LPARAM)(LPTVINSERTSTRUCT)&tvi);
-				
-			}	
-		} 
-	}	
+			case GMID_HAVOK_RBCOLLECTION:
+				tvi.hParent = Havok;
+				tvi.hParent = AddString("Rigid Body Collection", &gmf->objectList->objects[i]->name);						
+				AddString("Name", &gmf->objectList->objects[i]->name);
+				break;*/
+		}
+		
+	} 
 }
 
 
@@ -291,6 +190,10 @@ void populateTreeView(HWND hwndTV)
 
 LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	TVITEM item;
+	HTREEITEM Selected;
+	int* pointer;
+	HWND hEdit;
     switch (message)                  /* handle the messages */
     {
 		case WM_INITDIALOG:
@@ -306,11 +209,10 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 				MessageBoxA(NULL, exception, "An error has occured!", MB_OK | MB_ICONERROR );
 			}
 			static HINSTANCE hInst = (HINSTANCE)GetWindowLong(hwnd, GWL_HINSTANCE);
-			HWND hwndtv;
-			hwndtv = CreateWindowEx(	0, 
+			hwndTV = CreateWindowEx(	0, 
 										WC_TREEVIEW, 
 										"lol",  
-										WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS, 
+										WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_EDITLABELS, 
 										0, 
 										0, 
 										643, 
@@ -320,7 +222,96 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
 										hInst, 
 										NULL
 										);
-			populateTreeView(hwndtv);
+			populateTreeView();
+			break;
+			
+		case WM_NOTIFY:
+			itoa(LOWORD(wParam), buf, 10);
+			switch (LOWORD(wParam))
+			{
+				case 500:
+					if(((LPNMHDR)lParam)->code == NM_RCLICK)
+					{
+						Selected=(HTREEITEM)SendMessage(hwndTV,TVM_GETNEXTITEM,TVGN_DROPHILITE,0);
+						SendMessage(hwndTV,TVM_SELECTITEM,TVGN_CARET,(LPARAM)Selected);
+						TreeView_EditLabel(hwndTV, Selected);
+					}
+					if(((LPNMHDR)lParam)->code == TVN_BEGINLABELEDIT)
+					{
+						memset(&item,0,sizeof(item));
+						Selected = (HTREEITEM)SendMessage(hwndTV, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)Selected);
+						
+						hEdit = TreeView_GetEditControl(hwndTV);
+						
+						item.mask=TVIF_PARAM;
+						item.hItem=Selected;
+						
+						if(SendMessage(hwndTV, TVM_GETITEM, TVGN_CARET, (LPARAM)&item))
+						{
+							itoa(((Uni*)item.lParam)->type, buf, 10);
+							switch(((Uni*)item.lParam)->type)
+							{
+								case 1: //int
+									sprintf(buf, "%i", *(int*)((Uni*)item.lParam)->object);
+									SetWindowText(hEdit, buf);
+									break;
+								case 2: //float
+									sprintf(buf, "%f", *(float*)((Uni*)item.lParam)->object);
+									SetWindowText(hEdit, buf);
+									break;
+								case 3: //string	
+									SetWindowText(hEdit, StrToC(*(string*)((Uni*)item.lParam)->object));
+									break;
+								case 4: //RGB
+									SetWindowText(hEdit, StrToC("#" + (string)RGBToC(*(RGB*)((Uni*)item.lParam)->object)));
+									break;
+							}
+						}
+						
+					}
+					if(((LPNMHDR)lParam)->code == TVN_ENDLABELEDIT)
+					{
+						memset(&item,0,sizeof(item));
+						Selected = (HTREEITEM)SendMessage(hwndTV, TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)Selected);
+						
+						item.mask=TVIF_TEXT;
+						item.hItem=Selected;
+						
+						hEdit = TreeView_GetEditControl(hwndTV);
+						
+						if(SendMessage(hwndTV, TVM_GETITEM, TVGN_CARET, (LPARAM)&item))
+						{
+							itoa(((Uni*)item.lParam)->type, buf, 10);
+							switch(((Uni*)item.lParam)->type)
+							{
+								case 1: //int
+									GetWindowText(hEdit, buf, 10);
+									*(int*)((Uni*)item.lParam)->object = atoi(buf);
+									item.pszText = StrToC(((Uni*)item.lParam)->label + ": " + buf);
+									SendMessage(hwndTV,TVM_SETITEM,0,(WPARAM)&item);
+									break;
+								case 2: //float
+									GetWindowText(hEdit, buf, 10);
+									*(float*)((Uni*)item.lParam)->object = atof(buf);
+									sprintf(buf, "%f", atof(buf));
+									item.pszText = StrToC(((Uni*)item.lParam)->label + ": " + buf);
+									SendMessage(hwndTV,TVM_SETITEM,0,(WPARAM)&item);
+									break;
+								case 3: //string	
+									GetWindowText(hEdit, buf, 10);
+									*(string*)((Uni*)item.lParam)->object = buf;
+									item.pszText = StrToC(((Uni*)item.lParam)->label + ": " + buf);
+									SendMessage(hwndTV,TVM_SETITEM,0,(WPARAM)&item);
+									break;
+								case 4: //RGB
+									SetWindowText(hEdit, StrToC("#" + (string)RGBToC(*(RGB*)((Uni*)item.lParam)->object)));
+									break;
+							}
+						}
+						
+					}
+					break;
+			}
 			break;
         case WM_DESTROY:
             PostQuitMessage (0);       /* send a WM_QUIT to the message queue */

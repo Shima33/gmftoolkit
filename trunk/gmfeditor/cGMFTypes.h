@@ -5,6 +5,9 @@
 #define GEOMOBJECT 24
 #define GMID_ATTACHMENTPT 212
 #define GMID_HAVOK_SIMOBJECT 702
+#define GMID_HAVOK_CONSTRAINTSOLVER 423
+#define GMID_HAVOK_HINGE_CONSTRAINT 472
+#define GMID_HAVOK_WHEEL_CONSTRAINT 462
 
 #include "sRGB.h"
 #include <string>
@@ -140,6 +143,42 @@ public:
 	cGMFCollisionPairList* cplist;
 	virtual int getType() {
 		return 312;
+	}
+};
+
+class cGMFObjectWheelConstraint : public cGMFObject {
+public:
+	string body1, body2;
+	float px, py, pz, ax, ay, az, sx, sy, sz, sl1, sl2, suspensionFriction, angularSpeed, gain;
+	virtual int getType() {
+		return 462;
+	}
+};
+
+class cGMFObjectHingeConstraint : public cGMFObject {
+public:
+	string body1, body2;
+	float px, py, pz, ax, ay, az, friction, angleLimitA, angleLimitB;
+	int isLimited;
+	virtual int getType() {
+		return 472;
+	}
+};
+
+class cGMFObjectCSolverList {
+public:
+	int CCount;
+	cGMFObject** cs;	
+};
+
+class cGMFObjectCSolver : public cGMFObject {
+public:
+	float treshold;
+	string RBColName;
+	int count;
+	cGMFObjectCSolverList* clist;
+	virtual int getType() {
+		return 423;
 	}
 };
 
