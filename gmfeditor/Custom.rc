@@ -1,0 +1,2 @@
+#include "main.h"
+ICON_MAIN ICON "GMFEditor.ico"
