@@ -23,6 +23,8 @@ extern FILE *output;
 #define endian_swap32(x) (x)
 #endif
 
+extern int isRA1;
+
 void readObjectGeoMesh(int preTabNum)
 {
 	printf("Decompiling \tMESH...\n");
@@ -106,8 +108,11 @@ void readObjectGeoMesh(int preTabNum)
 		}
 		tab(preTabNum+1); fprintf(output, "}\n");
 	}
-
-	int meshHasSecondMaterial = getInteger();
+	int meshHasSecondMaterial;
+	if (!isRA1)
+		meshHasSecondMaterial = getInteger();
+	else
+		meshHasSecondMaterial = 0;
 	
 	if (meshHasSecondMaterial)
 	{
@@ -162,7 +167,7 @@ void readObjectGeoMesh(int preTabNum)
 			float x = getFloat();
 			float y = getFloat();
 			float z = getFloat();
-			tab(preTabNum+2); fprintf(output, "*MESH_TVERT\t%i\t%f\t%f\t%f\n", i, x, y, z);
+			tab(preTabNum+2); fprintf(output, "*MESH_CVERT\t%i\t%f\t%f\t%f\n", i, x, y, z);
 		}
 
 		tab(preTabNum+1); fprintf(output, "}\n");
@@ -175,7 +180,7 @@ void readObjectGeoMesh(int preTabNum)
 			int mx = getInteger();
 			int my = getInteger();
 			int mz = getInteger();
-			tab(preTabNum+2); fprintf(output, "*MESH_TFACE\t%i\t%i\ti\t%i\n", i, mx, my, mz);
+			tab(preTabNum+2); fprintf(output, "*MESH_CFACE\t%i\t%i\t%i\t%i\n", i, mx, my, mz);
 		}
 		tab(preTabNum+1); fprintf(output, "}\n");
 	}
@@ -204,12 +209,45 @@ void readObjectGeoMesh(int preTabNum)
 		tab(preTabNum+1); fprintf(output, "}\n");
 	}
 	
-	int meshBackFaceCull = getInteger();
-	tab(preTabNum+1); fprintf(output, "*BACKFACE_CULL\t%i\n", meshBackFaceCull);
+	if (!isRA1)
+	{
+		int meshBackFaceCull = getInteger();
+		tab(preTabNum+1); fprintf(output, "*BACKFACE_CULL\t%i\n", meshBackFaceCull);
+	}
 	tab(preTabNum+1); fprintf(output, "*MATERIAL_REF\t%i\n", meshMatRef);
 
 	tab(preTabNum); fprintf(output, "}\n");
 	delete normalOrder;
+}
+
+void readCollisionMesh(int preTabNum)
+{
+	tab(preTabNum); fprintf(output, "*GMID_COLLISION_MESH\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	getBytes(8);
+
+	int totalLength = getInteger();	
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);	
+		printf("Decompiling GMID_COLLISION_MESH %s...\n", objName);
+		//free(objName);
+	}
+	else
+	{
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling GMID_COLLISION_MESH...\n");
+	}
+
+	readObjectNodeTM(preTabNum + 1);
+	readObjectGeoMesh(preTabNum + 1);
+
+	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
 }
 
 void readObjectGeo(int preTabNum)
@@ -235,18 +273,18 @@ void readObjectGeo(int preTabNum)
 		printf("Decompiling GEOMOBJECT...\n");
 	}
 
-	if (getBytesNF(1)[0] != '\x00')
+	if (getBytesNF(1)[0] != '\x00' && !isRA1)
 	{
 		char* objParent = getString();
 		tab(preTabNum+1); fprintf(output, "*NODE_PARENT\t%s\n", objParent);
-		//free(objParent);
 	}
 
-	char* temp = getBytes(1);
-	int objShadeVerts = temp[0];
-	//free(temp);
-
-	tab(preTabNum+1); fprintf(output, "*NODE_SHADEVERTS\t%i\n", objShadeVerts);
+	if (!isRA1)
+	{
+		char* temp = getBytes(1);
+		int objShadeVerts = temp[0];
+		tab(preTabNum+1); fprintf(output, "*NODE_SHADEVERTS\t%i\n", objShadeVerts);
+	}
 	
 	readObjectNodeTM(preTabNum + 1);
 	readObjectGeoMesh(preTabNum + 1);

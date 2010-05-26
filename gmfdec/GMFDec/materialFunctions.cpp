@@ -22,6 +22,8 @@ extern FILE *output;
 #define endian_swap32(x) (x)
 #endif
 
+extern int isRA1;
+
 void readTexture(int preTabNum)
 {
 	getBytes(8);
@@ -74,9 +76,13 @@ void readTexture(int preTabNum)
 		strncpy(mapBitmapFilter, "Pyramidal", 10);
 	else
 		strncpy(mapBitmapFilter, "SAT", 10);
-		
-	int mapBitmapChannel = getInteger();
-	getBytes(4);
+	
+	int mapBitmapChannel;
+	if (isRA1 == 0)
+	{
+		mapBitmapChannel = getInteger();
+		getBytes(4);
+	}
 	
 	tab(preTabNum); fprintf(output, "*TEXTURE\n");
 	tab(preTabNum); fprintf(output, "{\n");
@@ -98,7 +104,10 @@ void readTexture(int preTabNum)
 	tab(preTabNum+1); fprintf(output, "*UVW_NOISE_LEVEL\t%i\n", mapUVWNoiseLevel);
 	tab(preTabNum+1); fprintf(output, "*UVW_NOISE_PHASE\t%f\n", mapUVWNoisePhase);
 	tab(preTabNum+1); fprintf(output, "*BITMAP_FILTER\t%s\n", mapBitmapFilter);
-	tab(preTabNum+1); fprintf(output, "*BITMAP_MAP_CHANNEL\t%i\n", mapBitmapChannel);
+	if (isRA1 == 0)
+	{
+		tab(preTabNum+1); fprintf(output, "*BITMAP_MAP_CHANNEL\t%i\n", mapBitmapChannel);
+	}
 	tab(preTabNum); fprintf(output, "}\n");
 	//free(mapName);
 	//free(mapClass);

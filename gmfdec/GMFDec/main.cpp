@@ -26,6 +26,7 @@ FILE *source, *output;
 #define endian_swap32(x) (x)
 #endif
 
+int isRA1;
 
 int main()
 {
@@ -61,8 +62,12 @@ int main()
 		char* objectType = getBytesNF(8);
 		
 		// Model Type
-		if (!memcmp(objectType, "\x01\x00\x00\x00\x00\x00\x00\x00", 8))
+		if (!memcmp(objectType, "\x01\x00\x00\x00\x00\x00\x00\x00", 8) || !memcmp(objectType, "\x03\x00\x00\x00\x00\x00\x00\x00", 8) || !memcmp(objectType, "\x02\x00\x00\x00\x00\x00\x00\x00", 8))
 		{
+			if (!memcmp(objectType, "\x03\x00\x00\x00\x00\x00\x00\x00", 8) || !memcmp(objectType, "\x02\x00\x00\x00\x00\x00\x00\x00", 8))
+				isRA1 = 1;
+			else
+				isRA1 = 0;
 			getBytes(8);
 			int type = getInteger();
 			
@@ -76,7 +81,7 @@ int main()
 				return 1;
 			}
 		}
-		
+
 		// Scene Info
 		else if (!memcmp(objectType, "\x01\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
@@ -93,8 +98,7 @@ int main()
 		//Object List
 		else if (!memcmp(objectType, "\x12\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
-			readObjectList(0);
-			
+			readObjectList(0);			
 		}
 		else
 		{

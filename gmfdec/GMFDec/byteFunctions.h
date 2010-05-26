@@ -4,3 +4,4 @@ int getInteger();
 char* getString();
 char* getRGB();
 float getFloat();
+int getIntegerNF();

@@ -24,6 +24,8 @@ extern FILE *output;
 #define endian_swap32(x) (x)
 #endif
 
+extern int isRA1;
+
 void readObjectNodeTM(int preTabNum)
 {
 	tab(preTabNum); fprintf(output, "*NODE_TM\n");
@@ -127,7 +129,10 @@ void readObjectLight(int preTabNum)
 
 	readObjectNodeTM(preTabNum+1);
 
-	getBytes(4);
+	int hasSecondTM = getInteger();
+
+	if (hasSecondTM)
+		readObjectNodeTM(preTabNum+1);
 
 	int lightType = getInteger();
 
@@ -159,11 +164,27 @@ void readObjectLight(int preTabNum)
 	char* lightColor = getRGB();
 	float lightIntensity = getFloat();
 	float lightAspect = getFloat();
-	getBytes(8);
-	float lightAttnStart = getFloat();
-	float lightAttnEnd = getFloat();
+
+	float lightAttnStart;
+	float lightAttnEnd;
+
+	if (!isRA1)
+	{
+		getBytes(8);
+		lightAttnStart = getFloat();
+		lightAttnEnd = getFloat();
+	}
+	else
+	{
+		lightAttnStart = getFloat();
+		lightAttnEnd = getFloat();
+		getBytes(8);
+	}
 	float lightTDist = getFloat();
-	int lightUseFarAttn = getInteger();
+
+	int lightUseFarAttn;
+	if (!isRA1)
+		lightUseFarAttn = getInteger();
 
 	tab(preTabNum+1); fprintf(output, "*LIGHT_USELIGHT\t%i\n", useLight);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_SPOTSHAPE\tCircle\n");
@@ -173,7 +194,101 @@ void readObjectLight(int preTabNum)
 	tab(preTabNum+1); fprintf(output, "*LIGHT_ATTNSTART\t%f\n", lightAttnStart);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_ATTNEND\t%f\n", lightAttnEnd);
 	tab(preTabNum+1); fprintf(output, "*LIGHT_TDIST\t%f\n", lightTDist);
-	tab(preTabNum+1); fprintf(output, "*USE FAR ATTENUATION\t%i\n", lightUseFarAttn);
+	if (!isRA1)
+	{
+		tab(preTabNum+1); fprintf(output, "*USE FAR ATTENUATION\t%i\n", lightUseFarAttn);
+	}
+
+	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
+}
+
+void readCamera(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+
+	tab(preTabNum); fprintf(output, "*CAMERA\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling CAMERA %s..\n", objName);
+	}
+	else
+	{
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling CAMERA...\n");
+	}
+
+	readObjectNodeTM(preTabNum+1);
+
+	int hasSecondTM = getInteger();
+
+	if (hasSecondTM)
+		readObjectNodeTM(preTabNum+1);
+
+	int Type = getInteger();
+	float Hither = getFloat();
+	float Yon = getFloat();
+	float Near = getFloat();
+	float Far = getFloat();
+	float FOV = getFloat();
+	float TDist = getFloat();
+
+	if (Type == 0)
+	{
+		tab(preTabNum+1); fprintf(output, "*CAMERA_TYPE\tTarget\n");
+	}
+	else
+	{
+		tab(preTabNum+1); fprintf(output, "*CAMERA_TYPE\tUnknown\n");
+	}
+
+	tab(preTabNum+1); fprintf(output, "*CAMERA_HITHER\t%f\n", Hither);
+	tab(preTabNum+1); fprintf(output, "*CAMERA_YON\t%f\n", Yon);
+	tab(preTabNum+1); fprintf(output, "*CAMERA_NEAR\t%f\n", Near);
+	tab(preTabNum+1); fprintf(output, "*CAMERA_FAR\t%f\n", Far);
+	tab(preTabNum+1); fprintf(output, "*CAMERA_FOV\t%f\n", FOV);
+	tab(preTabNum+1); fprintf(output, "*CAMERA_TDIST\t%f\n", TDist);
+
+	tab(preTabNum); fprintf(output, "}\n");
+	printf("\n");
+}
+
+void readCollisionBox(int preTabNum)
+{
+	getBytes(8);
+	int totalLength = getInteger();
+
+	tab(preTabNum); fprintf(output, "*GMID_COLLISION_BOX\n");
+	tab(preTabNum); fprintf(output, "{\n");
+
+	if (getBytesNF(6)[5] != '\x00')
+	{
+		char* objName = getString();
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t%s\n", objName);
+		printf("Decompiling GMID_COLLISION_BOX %s..\n", objName);
+	}
+	else
+	{
+		getBytes(4);
+		tab(preTabNum+1); fprintf(output, "*NODE_NAME\t(null)\n");
+		printf("Decompiling GMID_COLLISION_BOX...\n");
+	}
+
+	readObjectNodeTM(preTabNum+1);
+
+	float L = getFloat();
+	float W = getFloat();
+	float H = getFloat();
+
+	tab(preTabNum+1); fprintf(output, "*LENGTH\t%f\n", L);
+	tab(preTabNum+1); fprintf(output, "*WIDTH\t%f\n", W);
+	tab(preTabNum+1); fprintf(output, "*HEIGHT\t%f\n", H);
 
 	tab(preTabNum); fprintf(output, "}\n");
 	printf("\n");
@@ -195,14 +310,26 @@ void readObjectList(int preTabNum)
 	for (i = 0; i < objCount; i++)
 	{
 		char* peekData = getBytesNF(8);
-		// Geometry
+		// RA2 Geometry
 		if (!memcmp(peekData, "\x02\x00\x00\x00\x04\x00\x00\x00", 8))
 		{
 			readObjectGeo(preTabNum+1);
 		}
 		
-		//Light
+		// RA1 Geometry
+		else if (!memcmp(peekData, "\x02\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			readObjectGeo(preTabNum+1);
+		}
+
+		// RA2 Light
 		else if (!memcmp(peekData, "\x05\x00\x00\x00\x03\x00\x00\x00", 8))
+		{
+			readObjectLight(preTabNum + 1);
+		}
+
+		// RA1 Light
+		else if (!memcmp(peekData, "\x05\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
 			readObjectLight(preTabNum + 1);
 		}
@@ -231,9 +358,28 @@ void readObjectList(int preTabNum)
 			readConstraintSolver(preTabNum + 1);
 		}
 
+		//Angular Dashpot
 		else if (!memcmp(peekData, "\x31\x00\x00\x00\x02\x00\x00\x00", 8))
 		{
 			readAngularDashpot(preTabNum + 1);
+		}
+
+		//RA1 Collision Mesh
+		else if (!memcmp(peekData, "\x18\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			readCollisionMesh(preTabNum + 1);
+		}
+
+		//Camera
+		else if (!memcmp(peekData, "\x04\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			readCamera(preTabNum+1);
+		}
+
+		// RA1 Collision Box
+		else if (!memcmp(peekData, "\x19\x00\x00\x00\x02\x00\x00\x00", 8))
+		{
+			readCollisionBox(preTabNum+1);
 		}
 	}
 	tab(preTabNum); fprintf(output, "}");
