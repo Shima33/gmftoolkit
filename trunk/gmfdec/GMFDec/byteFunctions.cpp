@@ -19,6 +19,8 @@ extern FILE *output;
 #define endian_swap32(x) (x)
 #endif
 
+extern int isRA1;
+
 char* getBytes(int num)
 {
 	char* datab = (char*)malloc(sizeof(char)*(num));
@@ -47,10 +49,21 @@ int getInteger()
 	return endian_swap32(ret);
 }
 
+int getIntegerNF()
+{
+	int ret;
+	fread(&ret, sizeof(int), 1, source);
+	fseek(source, -4, 1);
+	return endian_swap32(ret);
+}
+
 char* getString()
 {
 	int i = 0;
 	int size = getInteger();
+
+	if (size == 0)
+		return "";
 
 	char* data = (char*)malloc(sizeof(char)*(size));
 	for(i = 0; i <= size-1; i++)
@@ -65,7 +78,10 @@ char* getRGB()
 	unsigned char* in = (unsigned char*)getBytes(3);
 	getBytes(1);
 	char* data = (char*)malloc(sizeof(char)*9);
-	sprintf(data, "0x%02X%02X%02X", in[0], in[1], in[2]);
+	if (!isRA1)
+		sprintf(data, "0x%02X%02X%02X", in[0], in[1], in[2]);
+	else
+		sprintf(data, "0x%02X%02X%02X", in[2], in[1], in[0]);
 	//free(in);
 	return data;
 }
