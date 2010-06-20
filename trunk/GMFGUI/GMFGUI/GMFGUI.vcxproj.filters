@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{5755486c-6d0d-4e35-a2a8-8777d24f773f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{85db54cd-22df-4aa8-868e-0f38feec889d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Decompiler">
+      <UniqueIdentifier>{dbf4e9a3-9762-4f0f-9e8a-bee0e327ea81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Decompiler">
+      <UniqueIdentifier>{7f74b243-13ec-4b58-bf65-9099fcef2834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compiler">
+      <UniqueIdentifier>{9dad6313-7386-452b-9b02-9bb4e3e0ad0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compiler">
+      <UniqueIdentifier>{d4fdacf8-e8e8-4c54-8f26-ebe2dfdace5e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\GMFGUI.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\GMFGUI.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\..\..\..\Desktop\UI_MainTitle.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\..\gmftoolkitrw\gmfdec\GMFDec.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AdvDialog.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFGUI.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFGUIDlg.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\byteFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\havokFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\helperFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\materialFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\objectFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\objectGeoFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFDec\sceneFunctions.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="decompilerMain.h">
+      <Filter>Header Files\Decompiler</Filter>
+    </ClInclude>
+    <ClInclude Include="mystdio.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\asciiFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\byteFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\gmidFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\headerFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\materialFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\objectFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="GMFComp\sceneFunctions.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="compilerMain.h">
+      <Filter>Header Files\Compiler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AdvDialog.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFGUI.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFGUIDlg.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decompilerMain.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="mystdio.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decByteFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decHavokFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decHelperFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decMaterialFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decObjectFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decObjectGeoFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFDec\decSceneFunctions.cpp">
+      <Filter>Source Files\Decompiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comAsciiFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comByteFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comGmidFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comHeaderFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\compilerMain.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comMaterialFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comObjectFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="GMFComp\comSceneFunctions.cpp">
+      <Filter>Source Files\Compiler</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GMFGUI.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

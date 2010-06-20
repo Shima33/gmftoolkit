@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GMFGUI", "GMFGUI\GMFGUI.vcxproj", "{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}.Debug|Win32.Build.0 = Debug|Win32
+		{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}.Release|Win32.ActiveCfg = Release|Win32
+		{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
