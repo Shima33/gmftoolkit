@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{330D7C28-8370-4CBD-8C01-53F36C9B1C8D}</ProjectGuid>
+    <RootNamespace>GMFGUI</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\..\gmftoolkitrw\gmfdec\GMFDec.ico" />
+    <None Include="..\..\..\..\..\Desktop\UI_MainTitle.bmp" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ReadMe.txt" />
+    <None Include="res\bitmap1.bmp" />
+    <None Include="res\GMFGUI.ico" />
+    <None Include="res\GMFGUI.rc2" />
+    <None Include="res\icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AdvDialog.h" />
+    <ClInclude Include="compilerMain.h" />
+    <ClInclude Include="GMFComp\asciiFunctions.h" />
+    <ClInclude Include="GMFComp\byteFunctions.h" />
+    <ClInclude Include="GMFComp\gmidFunctions.h" />
+    <ClInclude Include="GMFComp\headerFunctions.h" />
+    <ClInclude Include="GMFComp\materialFunctions.h" />
+    <ClInclude Include="GMFComp\objectFunctions.h" />
+    <ClInclude Include="GMFComp\sceneFunctions.h" />
+    <ClInclude Include="GMFDec\byteFunctions.h" />
+    <ClInclude Include="GMFDec\havokFunctions.h" />
+    <ClInclude Include="GMFDec\helperFunctions.h" />
+    <ClInclude Include="GMFDec\materialFunctions.h" />
+    <ClInclude Include="GMFDec\objectFunctions.h" />
+    <ClInclude Include="GMFDec\objectGeoFunctions.h" />
+    <ClInclude Include="GMFDec\sceneFunctions.h" />
+    <ClInclude Include="GMFGUI.h" />
+    <ClInclude Include="GMFGUIDlg.h" />
+    <ClInclude Include="decompilerMain.h" />
+    <ClInclude Include="mystdio.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AdvDialog.cpp" />
+    <ClCompile Include="GMFComp\comAsciiFunctions.cpp" />
+    <ClCompile Include="GMFComp\comByteFunctions.cpp" />
+    <ClCompile Include="GMFComp\comGmidFunctions.cpp" />
+    <ClCompile Include="GMFComp\comHeaderFunctions.cpp" />
+    <ClCompile Include="GMFComp\compilerMain.cpp" />
+    <ClCompile Include="GMFComp\comMaterialFunctions.cpp" />
+    <ClCompile Include="GMFComp\comObjectFunctions.cpp" />
+    <ClCompile Include="GMFComp\comSceneFunctions.cpp" />
+    <ClCompile Include="GMFDec\decByteFunctions.cpp" />
+    <ClCompile Include="GMFDec\decHavokFunctions.cpp" />
+    <ClCompile Include="GMFDec\decHelperFunctions.cpp" />
+    <ClCompile Include="GMFDec\decompilerMain.cpp" />
+    <ClCompile Include="GMFDec\decMaterialFunctions.cpp" />
+    <ClCompile Include="GMFDec\decObjectFunctions.cpp" />
+    <ClCompile Include="GMFDec\decObjectGeoFunctions.cpp" />
+    <ClCompile Include="GMFDec\decSceneFunctions.cpp" />
+    <ClCompile Include="GMFGUI.cpp" />
+    <ClCompile Include="GMFGUIDlg.cpp" />
+    <ClCompile Include="mystdio.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GMFGUI.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="GMFGUI.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
