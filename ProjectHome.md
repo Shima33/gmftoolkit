@@ -1,0 +1,3 @@
+GMF Toolkit is a collection of tools and libraries to process, analyze and convert GMF (Gabriel Meta File) files, which are used in the game Robot Arena 2. It aims to be an open-source set of utilities that will help developers read and write to these files.
+
+Right now we have a working GMF compiler and decompiler, which are both able to decompile and then recompile all object that are found in-game.
